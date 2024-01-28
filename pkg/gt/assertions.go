@@ -23,26 +23,11 @@ func Expect[A any](test *Test, actual *A) *Expectation[A] {
 	}
 }
 
-func (expected *Expectation[A]) failMessage(relPath string, line int, errorMsg string) string {
-	expected.test.testingT.Helper()
-
-	if expected.actual != nil {
-		return fmt.Sprintf("Failed at [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg, *expected.actual))
-	}
-	return fmt.Sprintf("Failed at [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg))
-}
-
 func (expected *Expectation[A]) Not() *Expectation[A] {
 	expected.test.testingT.Helper()
 
 	expected.reverseExpectation = true
 	return expected
-}
-
-func (expected *Expectation[A]) resetNot() {
-	expected.test.testingT.Helper()
-
-	expected.reverseExpectation = false
 }
 
 // TODO: まだ調整が必要: failMessageが %sになっているため、文字列がおかしくなる
@@ -99,7 +84,6 @@ func (expected *Expectation[A]) checkBool(value bool, errorMsg string) {
 		msgNotBool := "Expected [%v] to be a bool value"
 		expected.processFailure(relPath, line, msgNotBool)
 	}
-	expected.resetNot()
 }
 
 func (expected *Expectation[A]) ToBeNil() {
@@ -114,6 +98,7 @@ func (expected *Expectation[A]) ToBeNil() {
 	}
 
 	expected.test.subtotal++
+	// REFACTOR:
 	if expected.reverseExpectation {
 		if expected.actual != nil {
 			expected.processPassed()
@@ -128,8 +113,64 @@ func (expected *Expectation[A]) ToBeNil() {
 		}
 		expected.processPassed()
 	}
-
 }
+
+// assertion for primitive values
+func (expected *Expectation[A]) ToBe(expectedValue A) {
+	expected.test.testingT.Helper()
+
+	_, file, line, _ := runtime.Caller(1)
+	relPath := extractRelPath(file)
+
+	failMsg := "Expected [%v] to be [%v]"
+	if expected.failMsg != "" {
+		failMsg = expected.failMsg
+	}
+
+	expected.test.subtotal++
+	switch v := any(*expected.actual).(type) {
+	case int:
+		expectedValueInt := any(expectedValue).(int)
+		if expected.reverseExpectation {
+			if v == expectedValueInt {
+				expected.processFailure(relPath, line, failMsg)
+				return
+			}
+			expected.processPassed()
+		} else {
+			if v != expectedValueInt {
+				expected.processFailure(relPath, line, failMsg)
+				return
+			}
+			expected.processPassed()
+		}
+	case string:
+		expectedValueString := any(expectedValue).(string)
+		if expected.reverseExpectation {
+			if v == expectedValueString {
+				expected.processFailure(relPath, line, failMsg)
+				return
+			}
+			expected.processPassed()
+		} else {
+			if v != expectedValueString {
+				expected.processFailure(relPath, line, failMsg)
+				return
+			}
+			expected.processPassed()
+		}
+	}
+}
+
+// TODO: expectがfailしたファイル・行を出力するには、expected.test.testingT.Helper()を使う必要がある。
+// すべての関数で、最初に expected.test.testingT.Helper() を呼ぶこと
+// TODO: それぞれのアサーションには、引数でカスタムのメッセージを指定できるようにすること
+
+// func ToEqual()
+// func PointerEquals()
+// func ContainString()
+// func ToMatchRegex()
+// assert json value the same
 
 func (expected Expectation[A]) processFailure(relPath string, line int, errorMsg string) {
 	expected.test.testingT.Helper()
@@ -154,12 +195,17 @@ func (expected *Expectation[A]) markAsFailed() {
 	expected.test.isAnyTestFailed = true
 }
 
-// TODO: expectがfailしたファイル・行を出力するには、expected.test.testingT.Helper()を使う必要がある。
-// すべての関数で、最初に expected.test.testingT.Helper() を呼ぶこと
-// TODO: それぞれのアサーションには、引数でカスタムのメッセージを指定できるようにすること
+func (expected *Expectation[A]) failMessage(relPath string, line int, errorMsg string) string {
+	expected.test.testingT.Helper()
 
-// func ToEqual() // これで、プリミティブ型をのすべてのequalityを確認できるようにすること。
-// func PointerEquals()
-// func ContainString()
-// func ToMatchRegex()
-// assert json value the same
+	if expected.actual != nil {
+		return fmt.Sprintf("Failed at [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg, *expected.actual))
+	}
+	return fmt.Sprintf("Failed at [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg))
+}
+
+func (expected *Expectation[A]) resetNot() {
+	expected.test.testingT.Helper()
+
+	expected.reverseExpectation = false
+}
