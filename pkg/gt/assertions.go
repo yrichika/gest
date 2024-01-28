@@ -23,147 +23,147 @@ func Expect[A any](test *Test, actual *A) *Expectation[A] {
 	}
 }
 
-func (expected *Expectation[A]) Not() *Expectation[A] {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) Not() *Expectation[A] {
+	expectation.test.testingT.Helper()
 
-	expected.reverseExpectation = true
-	return expected
+	expectation.reverseExpectation = true
+	return expectation
 }
 
 // TODO: まだ調整が必要: failMessageが %sになっているため、文字列がおかしくなる
-func (expected *Expectation[A]) FailMsg(msg string) *Expectation[A] {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) FailMsg(msg string) *Expectation[A] {
+	expectation.test.testingT.Helper()
 
-	expected.failMsg = msg
-	return expected
+	expectation.failMsg = msg
+	return expectation
 }
 
 // TODO: 引数にカスタムのメッセージをいれられるようにする
-func (expected *Expectation[A]) ToBeTrue() {
-	expected.test.testingT.Helper()
-	expected.handleBoolReverseExpectation(true)
+func (expectation *Expectation[A]) ToBeTrue() {
+	expectation.test.testingT.Helper()
+	expectation.handleBoolReverseExpectation(true)
 }
 
-func (expected *Expectation[A]) ToBeFalse() {
-	expected.test.testingT.Helper()
-	expected.handleBoolReverseExpectation(false)
+func (expectation *Expectation[A]) ToBeFalse() {
+	expectation.test.testingT.Helper()
+	expectation.handleBoolReverseExpectation(false)
 }
 
-func (expected *Expectation[A]) handleBoolReverseExpectation(value bool) {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) handleBoolReverseExpectation(value bool) {
+	expectation.test.testingT.Helper()
 
 	failMsg := "Expected [%%v] to be %v"
-	if expected.failMsg != "" {
-		failMsg = expected.failMsg
+	if expectation.failMsg != "" {
+		failMsg = expectation.failMsg
 	}
 
-	if expected.reverseExpectation {
-		expected.checkBool(!value, fmt.Sprintf(failMsg, !value))
+	if expectation.reverseExpectation {
+		expectation.checkBool(!value, fmt.Sprintf(failMsg, !value))
 		return
 	}
-	expected.checkBool(value, fmt.Sprintf(failMsg, value))
+	expectation.checkBool(value, fmt.Sprintf(failMsg, value))
 }
 
-func (expected *Expectation[A]) checkBool(value bool, errorMsg string) {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) checkBool(value bool, errorMsg string) {
+	expectation.test.testingT.Helper()
 
 	// `3` is where ToBeTrue() or ToBeFalse() is called
 	_, file, line, _ := runtime.Caller(3)
 	relPath := extractRelPath(file)
 
-	expected.test.subtotal++
-	switch v := any(*expected.actual).(type) {
+	expectation.test.subtotal++
+	switch v := any(*expectation.actual).(type) {
 	case bool:
 		if v != value {
-			expected.processFailure(relPath, line, errorMsg)
+			expectation.processFailure(relPath, line, errorMsg)
 			return
 		}
-		expected.processPassed()
+		expectation.processPassed()
 	default:
 		// TODO: ここもメッセージ変えられるようにする
 		msgNotBool := "Expected [%v] to be a bool value"
-		expected.processFailure(relPath, line, msgNotBool)
+		expectation.processFailure(relPath, line, msgNotBool)
 	}
 }
 
-func (expected *Expectation[A]) ToBeNil() {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) ToBeNil() {
+	expectation.test.testingT.Helper()
 
 	_, file, line, _ := runtime.Caller(1)
 	relPath := extractRelPath(file)
 
 	failMsg := "Expected [%v] to be nil"
-	if expected.failMsg != "" {
-		failMsg = expected.failMsg
+	if expectation.failMsg != "" {
+		failMsg = expectation.failMsg
 	}
 
-	expected.test.subtotal++
+	expectation.test.subtotal++
 	// REFACTOR:
-	if expected.reverseExpectation {
-		if expected.actual != nil {
-			expected.processPassed()
+	if expectation.reverseExpectation {
+		if expectation.actual != nil {
+			expectation.processPassed()
 			return
 		}
 		// FIXME: Not()を使って、ここの場合メッセージが %v の部分が正しくないため修正
-		expected.processFailure(relPath, line, failMsg)
+		expectation.processFailure(relPath, line, failMsg)
 	} else {
-		if expected.actual != nil {
-			expected.processFailure(relPath, line, failMsg)
+		if expectation.actual != nil {
+			expectation.processFailure(relPath, line, failMsg)
 			return
 		}
-		expected.processPassed()
+		expectation.processPassed()
 	}
 }
 
 // assertion for primitive values
-func (expected *Expectation[A]) ToBe(expectedValue A) {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) ToBe(expectationValue A) {
+	expectation.test.testingT.Helper()
 
 	_, file, line, _ := runtime.Caller(1)
 	relPath := extractRelPath(file)
 
 	failMsg := "Expected [%v] to be [%v]"
-	if expected.failMsg != "" {
-		failMsg = expected.failMsg
+	if expectation.failMsg != "" {
+		failMsg = expectation.failMsg
 	}
 
-	expected.test.subtotal++
-	switch v := any(*expected.actual).(type) {
+	expectation.test.subtotal++
+	switch v := any(*expectation.actual).(type) {
 	case int:
-		expectedValueInt := any(expectedValue).(int)
-		if expected.reverseExpectation {
-			if v == expectedValueInt {
-				expected.processFailure(relPath, line, failMsg)
+		expectationValueInt := any(expectationValue).(int)
+		if expectation.reverseExpectation {
+			if v == expectationValueInt {
+				expectation.processFailure(relPath, line, failMsg)
 				return
 			}
-			expected.processPassed()
+			expectation.processPassed()
 		} else {
-			if v != expectedValueInt {
-				expected.processFailure(relPath, line, failMsg)
+			if v != expectationValueInt {
+				expectation.processFailure(relPath, line, failMsg)
 				return
 			}
-			expected.processPassed()
+			expectation.processPassed()
 		}
 	case string:
-		expectedValueString := any(expectedValue).(string)
-		if expected.reverseExpectation {
-			if v == expectedValueString {
-				expected.processFailure(relPath, line, failMsg)
+		expectationValueString := any(expectationValue).(string)
+		if expectation.reverseExpectation {
+			if v == expectationValueString {
+				expectation.processFailure(relPath, line, failMsg)
 				return
 			}
-			expected.processPassed()
+			expectation.processPassed()
 		} else {
-			if v != expectedValueString {
-				expected.processFailure(relPath, line, failMsg)
+			if v != expectationValueString {
+				expectation.processFailure(relPath, line, failMsg)
 				return
 			}
-			expected.processPassed()
+			expectation.processPassed()
 		}
 	}
 }
 
-// TODO: expectがfailしたファイル・行を出力するには、expected.test.testingT.Helper()を使う必要がある。
-// すべての関数で、最初に expected.test.testingT.Helper() を呼ぶこと
+// TODO: expectがfailしたファイル・行を出力するには、expectation.test.testingT.Helper()を使う必要がある。
+// すべての関数で、最初に expectation.test.testingT.Helper() を呼ぶこと
 // TODO: それぞれのアサーションには、引数でカスタムのメッセージを指定できるようにすること
 
 // func ToEqual()
@@ -172,40 +172,40 @@ func (expected *Expectation[A]) ToBe(expectedValue A) {
 // func ToMatchRegex()
 // assert json value the same
 
-func (expected Expectation[A]) processFailure(relPath string, line int, errorMsg string) {
-	expected.test.testingT.Helper()
+func (expectation Expectation[A]) processFailure(relPath string, line int, errorMsg string) {
+	expectation.test.testingT.Helper()
 
-	msg := expected.failMessage(relPath, line, errorMsg)
-	expected.test.testingT.Errorf(RedMsg(msg))
-	expected.markAsFailed()
-	expected.resetNot()
+	msg := expectation.failMessage(relPath, line, errorMsg)
+	expectation.test.testingT.Errorf(RedMsg(msg))
+	expectation.markAsFailed()
+	expectation.resetNot()
 }
 
-func (expected *Expectation[A]) processPassed() {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) processPassed() {
+	expectation.test.testingT.Helper()
 
-	expected.test.passed++
-	expected.resetNot()
+	expectation.test.passed++
+	expectation.resetNot()
 }
 
-func (expected *Expectation[A]) markAsFailed() {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) markAsFailed() {
+	expectation.test.testingT.Helper()
 
-	expected.test.isThisTestFailed = true
-	expected.test.isAnyTestFailed = true
+	expectation.test.isThisTestFailed = true
+	expectation.test.isAnyTestFailed = true
 }
 
-func (expected *Expectation[A]) failMessage(relPath string, line int, errorMsg string) string {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) failMessage(relPath string, line int, errorMsg string) string {
+	expectation.test.testingT.Helper()
 
-	if expected.actual != nil {
-		return fmt.Sprintf("Failed at [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg, *expected.actual))
+	if expectation.actual != nil {
+		return fmt.Sprintf("Failed at [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg, *expectation.actual))
 	}
 	return fmt.Sprintf("Failed at [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg))
 }
 
-func (expected *Expectation[A]) resetNot() {
-	expected.test.testingT.Helper()
+func (expectation *Expectation[A]) resetNot() {
+	expectation.test.testingT.Helper()
 
-	expected.reverseExpectation = false
+	expectation.reverseExpectation = false
 }
