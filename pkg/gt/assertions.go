@@ -2,6 +2,7 @@ package gt
 
 import (
 	"fmt"
+	"reflect"
 	"runtime"
 )
 
@@ -118,10 +119,33 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 	}
 }
 
-func (expectation *Expectation[A]) ToEqual(expected A) {
+// TEST:
+// two structs, slices, maps equality
+func (expectation *Expectation[A]) ToDeepEqual(expected A) {
 	expectation.test.testingT.Helper()
 
-	// TODO: もっとわかりやすい名前にする
+	relPath, line := getTestInfo(1)
+	// FIXME: メッセージ修正
+	failMsg := "Expected [%v] to be [%v]"
+	if expectation.failMsg != "" {
+		failMsg = expectation.failMsg
+	}
+
+	expectation.test.subtotal++
+	if expectation.reverseExpectation {
+		if !reflect.DeepEqual(*expectation.actual, expected) {
+			expectation.processPassed()
+			return
+		}
+		expectation.processFailure(relPath, line, failMsg)
+		return
+	}
+
+	if reflect.DeepEqual(*expectation.actual, expected) {
+		expectation.processPassed()
+		return
+	}
+	expectation.processFailure(relPath, line, failMsg)
 }
 
 func (expectation *Expectation[A]) ToBeSamePointerAs(expected *A) {
