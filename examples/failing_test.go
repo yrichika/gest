@@ -14,7 +14,7 @@ func TestFailBehavior(testingT *testing.T) {
 	t.Describe("Gest test for failure", func() {
 		t.It("should fail and show fail messages", func() {
 			v := false
-			gt.Expect(t, &v).ToBeTrue()
+			gt.Expect(t, &v).ToBe(true)
 		})
 
 	})

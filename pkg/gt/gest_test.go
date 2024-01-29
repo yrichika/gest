@@ -9,21 +9,21 @@ func TestSuiteGest(testingT *testing.T) {
 	mockTrue := true
 
 	t.BeforeAll(func() {
-		Expect(t, &mockTrue).ToBeTrue()
+		Expect(t, &mockTrue).ToBe(true)
 	})
 	t.BeforeEach(func() {
-		Expect(t, &mockTrue).ToBeTrue()
+		Expect(t, &mockTrue).ToBe(true)
 	})
 	t.AfterEach(func() {
-		Expect(t, &mockTrue).ToBeTrue()
+		Expect(t, &mockTrue).ToBe(true)
 	})
 	t.AfterAll(func() {
-		Expect(t, &mockTrue).ToBeTrue()
+		Expect(t, &mockTrue).ToBe(true)
 	})
 
 	t.Describe("Testing Gest Describe", func() {
 		t.It("also should work with Describe", func() {
-			Expect(t, &mockTrue).ToBeTrue()
+			Expect(t, &mockTrue).ToBe(true)
 		})
 
 		t.Todo("Todo function should do nothing but print todo message")
