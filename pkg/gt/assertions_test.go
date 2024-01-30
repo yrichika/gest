@@ -4,6 +4,11 @@ import (
 	"testing"
 )
 
+type MockObject struct {
+	Name string
+	Age  int
+}
+
 func TestAssertions(testingT *testing.T) {
 	t := CreateTest(testingT)
 
@@ -33,9 +38,6 @@ func TestAssertions(testingT *testing.T) {
 			var c string = "hoge"
 			var d string = "hoge"
 			Expect(t, &c).ToBe(d)
-
-			// var p uintptr = &a
-			// Expect(t, p).Not().ToBe()
 		})
 
 		t.It("compares pointers", func() {
@@ -44,6 +46,25 @@ func TestAssertions(testingT *testing.T) {
 			var aPointer *int = &a
 			// var bPointer *int = &b
 			Expect(t, aPointer).ToBeSamePointerAs(&b)
+		})
+
+		t.It("should pass when two objects are equal", func() {
+			a := MockObject{Name: "hoge", Age: 1}
+			b := MockObject{Name: "hoge", Age: 1}
+
+			Expect(t, &a).ToDeepEqual(b)
+		})
+
+		t.It("WhenFailPrint", func() {
+			var a int = 1
+			var b int = 2
+			WhenFailPrint[int](t, "show this message when fail").Expect(&a).ToBe(b)
+		})
+
+		t.It("should pass when panic happens", func() {
+			ExpectPanic(t).ToHappen(func() {
+				panic("panic")
+			})
 		})
 	})
 }

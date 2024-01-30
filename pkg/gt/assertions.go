@@ -15,6 +15,7 @@ type Expectation[A any] struct {
 
 // TODO: testを常に引数に渡さないようにしたい。
 // ただし、メソッドに型パラメータをもたせられないため、方法がわからない。
+// Expectation constructor
 func Expect[A any](test *Test, actual *A) *Expectation[A] {
 	return &Expectation[A]{
 		actual:             actual,
@@ -24,18 +25,28 @@ func Expect[A any](test *Test, actual *A) *Expectation[A] {
 	}
 }
 
+// TODO: まだ調整が必要: failMessageが %sになっているため、文字列がおかしくなる
+// Expectation constructor with fail message
+func WhenFailPrint[A any](test *Test, failMsg string) *Expectation[A] {
+	return &Expectation[A]{
+		test:               test,
+		failMsg:            failMsg,
+		reverseExpectation: false,
+	}
+}
+
+// Use this ONLY AFTER you call `WhenFailPrint()` or any other Expectation constructors if exist
+func (expectation *Expectation[A]) Expect(actual *A) *Expectation[A] {
+	expectation.test.testingT.Helper()
+
+	expectation.actual = actual
+	return expectation
+}
+
 func (expectation *Expectation[A]) Not() *Expectation[A] {
 	expectation.test.testingT.Helper()
 
 	expectation.reverseExpectation = true
-	return expectation
-}
-
-// TODO: まだ調整が必要: failMessageが %sになっているため、文字列がおかしくなる
-func (expectation *Expectation[A]) FailMsg(msg string) *Expectation[A] {
-	expectation.test.testingT.Helper()
-
-	expectation.failMsg = msg
 	return expectation
 }
 
@@ -119,8 +130,7 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 	}
 }
 
-// TEST:
-// two structs, slices, maps equality
+// two structs equality
 func (expectation *Expectation[A]) ToDeepEqual(expected A) {
 	expectation.test.testingT.Helper()
 
@@ -176,11 +186,7 @@ func (expectation *Expectation[A]) ToBeSamePointerAs(expected *A) {
 
 }
 
-// TODO: expectがfailしたファイル・行を出力するには、expectation.test.testingT.Helper()を使う必要がある。
-// すべての関数で、最初に expectation.test.testingT.Helper() を呼ぶこと
-// TODO: それぞれのアサーションには、引数でカスタムのメッセージを指定できるようにすること
-
-// func ContainString()
+// func ToContainString()
 // func ToMatchRegex()
 // assert json value the same
 
