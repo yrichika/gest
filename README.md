@@ -197,7 +197,7 @@ func TestAssertions(testingT *testing.T) {
       expected2 = 13
       gt.Expect(t, &r2).ToBe(expected2)
     })
-	})
+  })
 }
 ```
 
