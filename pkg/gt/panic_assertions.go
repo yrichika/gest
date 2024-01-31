@@ -1,6 +1,8 @@
 package gt
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type PanicExpectation struct {
 	test               *Test
@@ -20,28 +22,28 @@ func ExpectPanic(test *Test) *PanicExpectation {
 func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 	p.test.testingT.Helper()
 	p.test.subtotal++
+
 	relPath, line := getTestInfo(1)
-	// TODO: メッセージ修正: reverseのときも対応できるように
-	failMsg := "Expected to panic"
-	if p.failMsg != "" {
-		failMsg = p.failMsg
-	}
 
 	defer func() {
+		p.test.testingT.Helper() // DON'T FORGET THIS
+
 		err := recover()
 		if p.reverseExpectation {
 			if err == nil {
 				p.processPassed()
 				return
 			}
-			p.processFailure(relPath, line, failMsg)
+			msg := p.FailMsg("Expected panic DID happen")
+			p.processFailure(relPath, line, msg)
 			return
 		}
 		if err != nil {
 			p.processPassed()
 			return
 		}
-		p.processFailure(relPath, line, failMsg)
+		msg := p.FailMsg("Expected panic did NOT happen")
+		p.processFailure(relPath, line, msg)
 	}()
 
 	panickyFunc()
@@ -52,6 +54,14 @@ func (p *PanicExpectation) Not() *PanicExpectation {
 
 	p.reverseExpectation = true
 	return p
+}
+
+func (p *PanicExpectation) FailMsg(msg string) string {
+
+	if p.failMsg != "" {
+		return p.failMsg
+	}
+	return msg
 }
 
 func (p *PanicExpectation) processFailure(relPath string, line int, errorMsg string) {
@@ -80,7 +90,6 @@ func (p *PanicExpectation) markAsFailed() {
 func (p *PanicExpectation) failMessage(relPath string, line int, errorMsg string) string {
 	p.test.testingT.Helper()
 
-	// TODO: メッセージ修正
 	return fmt.Sprintf("Panic: [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg))
 }
 
