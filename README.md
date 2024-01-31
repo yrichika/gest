@@ -17,9 +17,9 @@ JavaScript/TypeScriptで[Jest](https://jestjs.io/)を使ったことがある方
 ```go
 func TestSuiteGest(testingT *testing.T) {
 
-	t := CreateTest(testingT)
+  t := CreateTest(testingT)
 
-	t.Describe("testing Jest style in Go!", func() {
+  t.Describe("testing Jest style in Go!", func() {
 
     t.It("should return true if input true", func() {
       r := someFunc(true)
@@ -103,7 +103,7 @@ Gestは、Goの標準のテスト関数の中にテストを作成します。
 // 書くことをおすすめします。ただし、`t`と紛らわしくなければ、ここは完全に自由です。
 func TestSuiteGest(testingT *testing.T) {
   // CreateTestに *testing.T を渡し、戻り値の *Test である`t`を取得します。
-	t := gt.CreateTest(testingT)
+  t := gt.CreateTest(testingT)
 }
 
 ```
@@ -118,7 +118,7 @@ Jestと少し違うところですが、Jestの場合は、`describe`と`it`を�
 ```go
 func TestSuiteGest(testingT *testing.T) {
 
-	t := CreateTest(testingT)
+  t := CreateTest(testingT)
 
   // Describe()がテストの「外側」に
   t.Describe("関数・テスト1の説明", func() {
@@ -157,7 +157,7 @@ func TestSuiteGest(testingT *testing.T) {
 
 func TestSuiteGest(testingT *testing.T) {
 
-	t := gt.CreateTest(testingT)
+  t := gt.CreateTest(testingT)
 
   t.BeforeEach(func () {
     // テストに必要な前処理を書きます
@@ -184,10 +184,10 @@ func TestSuiteGest(testingT *testing.T) {
 ```go
 
 func TestAssertions(testingT *testing.T) {
-	t := CreateTest(testingT)
+  t := CreateTest(testingT)
 
-	t.Describe("assertion sample", func() {
-		i.It("should return true", func() {
+  t.Describe("assertion sample", func() {
+    t.It("should return true", func() {
       r1 := someFunc()
       expected1 = true
       // プリミティブ型 int, bool, string, ...etc はすべて`ToBe`だけでアサート可能です
