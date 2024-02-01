@@ -13,10 +13,10 @@ type Expectation[A any] struct {
 	reverseExpectation bool
 }
 
-// TODO: testを常に引数に渡さないようにしたい。
-// ただし、メソッドに型パラメータをもたせられないため、方法がわからない。
-// Expectation constructor
+// アサートする際に、`*Test`を第1引数に、アサート対象の値のポインタを第2引数に渡してください。
 func Expect[A any](test *Test, actual *A) *Expectation[A] {
+	// TODO: Testを常に引数に渡さないようにしたい。
+	// ただしメソッドに型パラメータをもたせられないため、方法がわからない。
 	return &Expectation[A]{
 		actual:             actual,
 		test:               test,
@@ -25,7 +25,9 @@ func Expect[A any](test *Test, actual *A) *Expectation[A] {
 	}
 }
 
-// Expectation constructor with fail message
+// アサートがFailした際に出力する文字列を変更したい場合に、第2引数にその文字列を渡してください。
+// この関数を呼び出した後に、`Expect(*A)`を呼び出してください。この後に呼び出すExpectは
+// 通常の`Expect(*Test, *A)`とは違い、`*Test`を第1引数に取りません。
 func WhenFailPrint[A any](test *Test, failMsg string) *Expectation[A] {
 	return &Expectation[A]{
 		test:               test,
@@ -34,7 +36,10 @@ func WhenFailPrint[A any](test *Test, failMsg string) *Expectation[A] {
 	}
 }
 
-// Use this ONLY AFTER you call `WhenFailPrint()` or any other Expectation constructors if exist
+// Use this ONLY AFTER you call `WhenFailPrint()` or any other Expectation constructors
+// if exist
+// `WhenFailPrint()`を呼び出した後にのみ、この関数を呼び出してください。
+// それ以外の場合では意味がない、もしくは正しく動作しない可能性があります。
 func (expectation *Expectation[A]) Expect(actual *A) *Expectation[A] {
 	expectation.test.testingT.Helper()
 
@@ -42,6 +47,9 @@ func (expectation *Expectation[A]) Expect(actual *A) *Expectation[A] {
 	return expectation
 }
 
+// アサートの結果が逆転します。`ToBe()`などのアサートするメソッドの直前で
+// `Not()`を呼び出してください。
+// 例: `Expect(test, &actual).Not().ToBe(expected)`
 func (expectation *Expectation[A]) Not() *Expectation[A] {
 	expectation.test.testingT.Helper()
 
@@ -49,6 +57,9 @@ func (expectation *Expectation[A]) Not() *Expectation[A] {
 	return expectation
 }
 
+// Assertion for nil values.
+// アサート対象の値がnilかどうかを確認します。
+// 対象の値がnilの場合はアサートがpassします。
 func (expectation *Expectation[A]) ToBeNil() {
 	expectation.test.testingT.Helper()
 
@@ -75,6 +86,8 @@ func (expectation *Expectation[A]) ToBeNil() {
 
 // Assertion for primitive values.
 // Types must be the same.
+// プリミティブ型の値を比較します。値が同じ場合はアサートがpassします。
+// アサート対象の値と、想定している値は同じ型である必要があります。
 func (expectation *Expectation[A]) ToBe(expected A) {
 	expectation.test.testingT.Helper()
 
@@ -122,6 +135,9 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 }
 
 // two structs equality
+// 2つの構造体の等価性を確認します。等価性は、構造体のフィールドの値が全て等しいことを意味します。
+// 2つの構造体が等しい場合はアサートがpassします。
+// 等価性の確認に、内部では`reflect.DeepEqual()`が使用されます。
 func (expectation *Expectation[A]) ToDeepEqual(expected A) {
 	expectation.test.testingT.Helper()
 
@@ -146,6 +162,8 @@ func (expectation *Expectation[A]) ToDeepEqual(expected A) {
 	expectation.processFailure(relPath, line, failMsg, &expected)
 }
 
+// Assertion for pointer values.
+// ポインタ型の値を比較します。ポインタが同じ場合はアサートがpassします。
 func (expectation *Expectation[A]) ToBeSamePointerAs(expected *A) {
 	expectation.test.testingT.Helper()
 
@@ -170,6 +188,7 @@ func (expectation *Expectation[A]) ToBeSamePointerAs(expected *A) {
 
 }
 
+// TODO: implement:
 // func ToContainString()
 // func ToMatchRegex()
 // assert json value the same

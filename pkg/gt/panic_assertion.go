@@ -10,6 +10,8 @@ type PanicExpectation struct {
 	failMsg            string
 }
 
+// panicが起きるかどうかをテストするために使います。
+// この関数の後に、ToHappen()を呼び出してください。
 func ExpectPanic(test *Test) *PanicExpectation {
 	return &PanicExpectation{
 		test:               test,
@@ -18,7 +20,8 @@ func ExpectPanic(test *Test) *PanicExpectation {
 	}
 }
 
-// errorやpanicが起きたことをアサート
+// panicが起きたことをアサートします。Panicが起きた場合に、アサートはパスします。
+// パニックが起きることを想定している関数を引数に渡してください。
 func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 	p.test.testingT.Helper()
 	p.test.subtotal++
@@ -49,6 +52,9 @@ func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 	panickyFunc()
 }
 
+// ToHappen()の結果を逆にします。`Not().ToHappen`とした場合は
+// panicが起きない場合にアサートがパスします。
+// 使用例: ExpectPanic(t).Not().ToHappen(func() {...})
 func (p *PanicExpectation) Not() *PanicExpectation {
 	p.test.testingT.Helper()
 

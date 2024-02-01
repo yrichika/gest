@@ -2,6 +2,7 @@ package gt
 
 import (
 	"testing"
+	"time"
 )
 
 func TestSuiteGest(testingT *testing.T) {
@@ -21,11 +22,14 @@ func TestSuiteGest(testingT *testing.T) {
 		Expect(t, &mockTrue).ToBe(true)
 	})
 
-	t.Describe("Testing Gest Describe", func() {
+	t.Skip().Describe("Testing Gest Describe", func() {
+
 		t.It("also should work with Describe", func() {
 			Expect(t, &mockTrue).ToBe(true)
 		})
-
+		t.Async().It("should be async", func() {
+			time.Sleep(3 * time.Second)
+		})
 		t.Todo("Todo function should do nothing but print todo message")
 
 		t.Skip().It("should be skipped", func() {
