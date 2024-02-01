@@ -121,6 +121,9 @@ func (t *Test) Describe(description string, body func()) {
 	for _, msg := range t.messages {
 		t.gestOutput(msg)
 	}
+
+	t.subtotal = 0
+	t.passed = 0
 }
 
 func (t *Test) describeFuncFailMsg(description string, elapsed time.Duration) string {
