@@ -5,36 +5,47 @@ import (
 	"time"
 )
 
-func TestSuiteGest(testingT *testing.T) {
+func TestSuiteGestRunner(testingT *testing.T) {
 	t := CreateTest(testingT)
 	mockTrue := true
 
 	t.BeforeAll(func() {
 		Expect(t, &mockTrue).ToBe(true)
+		println("BeforeAll")
 	})
 	t.BeforeEach(func() {
 		Expect(t, &mockTrue).ToBe(true)
+		println("BeforeEach")
 	})
 	t.AfterEach(func() {
 		Expect(t, &mockTrue).ToBe(true)
+		println("AfterEach")
 	})
 	t.AfterAll(func() {
 		Expect(t, &mockTrue).ToBe(true)
+		println("AfterAll")
 	})
 
-	t.Skip().Describe("Testing Gest Describe", func() {
+	t.Describe("Testing Gest Describe", func() {
 
 		t.It("also should work with Describe", func() {
 			Expect(t, &mockTrue).ToBe(true)
 		})
+
 		t.Async().It("should be async", func() {
-			time.Sleep(3 * time.Second)
+			// actually not sure how to Parallel functionality,
+			// but it should be working
+			time.Sleep(300 * time.Millisecond)
 		})
+
 		t.Todo("Todo function should do nothing but print todo message")
 
 		t.Skip().It("should be skipped", func() {
-			//
+			Expect(t, &mockTrue).ToBe(false) // this should not be executed
 		})
 	})
-	// TODO: 他のgestの関数・メソッドのテストも書く
+
+	t.Skip().Describe("this test should be skipped", func() {
+		Expect(t, &mockTrue).ToBe(false) // this should not be executed
+	})
 }

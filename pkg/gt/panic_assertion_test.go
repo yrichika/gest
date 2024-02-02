@@ -4,10 +4,20 @@ import (
 	"testing"
 )
 
-func TestPanicAssertion(testingT *testing.T) {
+func TestPanicAssertions(testingT *testing.T) {
 	t := CreateTest(testingT)
 
 	t.Describe("ExpectPanic", func() {
-		t.Todo("should pass when panic happens")
+		t.It("should pass when panic happens", func() {
+			ExpectPanic(t).ToHappen(func() {
+				panic("test")
+			})
+		})
+
+		t.It("should pass when panic does not happen", func() {
+			ExpectPanic(t).Not().ToHappen(func() {
+				// do nothing
+			})
+		})
 	})
 }
