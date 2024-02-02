@@ -18,28 +18,32 @@ type FlagHolder struct {
 	Coverage           bool
 	CoverageProfileDir string
 	RunOnly            string
+	RunAll             bool
 }
 
 func flags() *FlagHolder {
 	var verbose bool
 	var veryVerbose bool
-	var Coverage bool
-	var CoverageProfileDir string
-	var RunOnly string
+	var coverage bool
+	var coverageProfileDir string
+	var runOnly string
+	var runAll bool
 	const defaultCoverageProfileDir = "gest_coverage"
 	flag.BoolVar(&verbose, "v", false, "verbose: this also logs \"go test\" command outputs")
 	flag.BoolVar(&veryVerbose, "vv", false, "very verbose: this also logs \"go test -v\" command outputs. If you don't see some output you implemented for debugging like Println(), use this option.")
-	flag.BoolVar(&Coverage, "cover", false, "create coverage profile")
-	flag.StringVar(&CoverageProfileDir, "coverprofile", defaultCoverageProfileDir, "specify name of coverage profile output directory")
-	flag.StringVar(&RunOnly, "run", "", "run only tests matching the regular expression.")
+	flag.BoolVar(&coverage, "cover", false, "create coverage profile")
+	flag.StringVar(&coverageProfileDir, "coverprofile", defaultCoverageProfileDir, "specify name of coverage profile output directory")
+	flag.StringVar(&runOnly, "run", "", "run only tests matching the regular expression.")
+	flag.BoolVar(&runAll, "all", false, "run all tests including hidden directories and other directories usually not targeted by 'go test ./...'. This is useful when you want to test all directories from the project root.")
 	flag.Parse()
 
 	return &FlagHolder{
 		verbose,
 		veryVerbose,
-		Coverage,
-		CoverageProfileDir,
-		RunOnly,
+		coverage,
+		coverageProfileDir,
+		runOnly,
+		runAll,
 	}
 }
 
@@ -73,7 +77,7 @@ func main() {
 		log.Fatal(gt.RedMsg(errUnexpectedMsg), err)
 	}
 
-	dirNames := gt.GetAllTestFileDirectories()
+	dirNames := gt.GetAllTestFileDirectories(flags.RunAll)
 	var failedTestResultLines []string
 	var passedTestResultLines []string
 	var anyOtherOutput []string

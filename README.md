@@ -7,8 +7,9 @@ English documentation located is after Japanese documentation.
 ### Introduction
 
 Goのテストを[Jest](https://jestjs.io/)のスタイルで書くことができるテストフレームワークです。
-Goのテストと100%互換性があるため、2つの種類のテスト混在させて書くことができます。
+Goのテストと100%互換性があるため、2つの種類のテスト混在させて書くことができます(実態はGoのテストのラッパーです)。
 そのため、Goテストを残しつつ、徐々にGestに切り替えていくことも可能です。
+さらに、100%互換性を保つため、CIの際にGestをCIサーバーにインストールしなくても、`go test`だけでテストを実行することができます。
 
 JavaScript/TypeScriptで[Jest](https://jestjs.io/)を使ったことがある方は、Goに移行した際に、簡単にGestでユニットテストを書くことができます。
 
@@ -255,6 +256,15 @@ HTMLのカバレッジファイルを`gest_coverage`ディレクトリに作成�
 gest -cover
 # OR 出力先のディレクトリ名を指定する場合
 gest -cover -coverprofile=[any_dir_name]
+```
+
+##### `-all`
+
+デフォルトで、Gestは`examples`フォルダのテストを実行しません。
+もし`examples`フォルダの中のテストを実行したい場合は、`examples`という名前をつけたディレクトリの中にテストがある場合は、`-all`を指定することで、全てのディレクトリ内のファイルがテストの対象になります。
+
+```sh
+gest -all
 ```
 
 

@@ -58,7 +58,7 @@ func InArray[T comparable](val T, array []T) bool {
 	return false
 }
 
-func GetAllTestFileDirectories() []string {
+func GetAllTestFileDirectories(isRunAll bool) []string {
 	var directories []string
 
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
@@ -66,9 +66,8 @@ func GetAllTestFileDirectories() []string {
 			return err
 		}
 
-		// TODO: .git以外でも`.`で始まる隠しディレクトリはスキップする
 		// skip hidden directories
-		if info.IsDir() && strings.HasPrefix(path, ".git") {
+		if info.IsDir() && ignoreUsually(path, isRunAll) {
 			return filepath.SkipDir
 		}
 
@@ -87,4 +86,21 @@ func GetAllTestFileDirectories() []string {
 	}
 
 	return directories
+}
+
+// Add directory names to ignore only when `-all` flag is NOT specified
+func ignoreUsually(dirName string, runAll bool) bool {
+	if runAll {
+		return alwaysIgnore(dirName)
+	}
+
+	return alwaysIgnore(dirName) ||
+		// Add directory names to ignore if required
+		dirName == "examples"
+}
+
+// Add directory names to always ignore
+func alwaysIgnore(dirName string) bool {
+	// TODO: .git以外でも`.`で始まる隠しディレクトリはスキップする
+	return strings.HasPrefix(dirName, ".git")
 }
