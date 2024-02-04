@@ -322,15 +322,15 @@ gt.Expect(t, &x).Not().ToBeNil()
 ```
 
 
-#### `WhenFailPrint(string).Expect(*A)`
+#### `PrintWhenFail(string).Expect(*A)`
 
-アサートエラーが起きた場合は、自動的に適切なメッセージを出力しますが、独自のメッセージに変更したい場合は、`WhenFailPrint`関数を使います。
-`WhenFailPrint`を使う場合は、`t *Test`は、`Expect`ではなく、`WhenFailPrint`の第一引数に指定してください。
+アサートエラーが起きた場合は、自動的に適切なメッセージを出力しますが、独自のメッセージに変更したい場合は、`PrintWhenFail`関数を使います。
+`PrintWhenFail`を使う場合は、`t *Test`は、`Expect`ではなく、`PrintWhenFail`の第一引数に指定してください。
 
 ```go
 a := 1
 b := 2
-gt.WhenFailPrint[int](t, "Fail時に出力されるカスタムメッセージ").Expect(&a).ToBe(b)
+gt.PrintWhenFail[int](t, "Fail時に出力されるカスタムメッセージ").Expect(&a).ToBe(b)
 ```
 
 

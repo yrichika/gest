@@ -50,10 +50,10 @@ func TestFailBehavior(testingT *testing.T) {
 		})
 	})
 
-	t.It("WhenFailPrint", func() {
+	t.It("PrintWhenFail", func() {
 		var a int = 1
 		var b int = 2
-		gt.WhenFailPrint[int](t, "show this message when fail").Expect(&a).ToBe(b)
+		gt.PrintWhenFail[int](t, "show this message when fail").Expect(&a).ToBe(b)
 	})
 
 }
