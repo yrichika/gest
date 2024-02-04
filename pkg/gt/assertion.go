@@ -71,7 +71,7 @@ func (expectation *Expectation[A]) ToBeNil() {
 			expectation.processPassed()
 			return
 		}
-		failMsg := expectation.FailMsg("Expected value IS nil")
+		failMsg := expectation.FailMsg("Value IS nil")
 		expectation.processFailure(relPath, line, failMsg, nil)
 		return
 	}
@@ -80,7 +80,7 @@ func (expectation *Expectation[A]) ToBeNil() {
 		expectation.processPassed()
 		return
 	}
-	failMsg := expectation.FailMsg("Expected [%#v] is NOT nil")
+	failMsg := expectation.FailMsg("[%#v] is NOT nil")
 	expectation.processFailure(relPath, line, failMsg, nil)
 }
 
@@ -149,7 +149,7 @@ func (expectation *Expectation[A]) ToDeepEqual(expected A) {
 			expectation.processPassed()
 			return
 		}
-		failMsg := expectation.FailMsg("Expected [%#v] IS [%#v]")
+		failMsg := expectation.FailMsg("actual:[%#v] IS expected:[%#v]")
 		expectation.processFailure(relPath, line, failMsg, &expected)
 		return
 	}
@@ -158,7 +158,7 @@ func (expectation *Expectation[A]) ToDeepEqual(expected A) {
 		expectation.processPassed()
 		return
 	}
-	failMsg := expectation.FailMsg("Expected [%#v] is NOT [%#v]")
+	failMsg := expectation.FailMsg("actual:[%#v] is NOT expected:[%#v]")
 	expectation.processFailure(relPath, line, failMsg, &expected)
 }
 
@@ -175,7 +175,7 @@ func (expectation *Expectation[A]) ToBeSamePointerAs(expected *A) {
 			expectation.processPassed()
 			return
 		}
-		failMsg := expectation.FailMsg("Expected pointer to [%#v] IS the same")
+		failMsg := expectation.FailMsg("Pointer to [%#v] IS the same")
 		expectation.processFailure(relPath, line, failMsg, nil)
 		return
 	}
@@ -183,7 +183,7 @@ func (expectation *Expectation[A]) ToBeSamePointerAs(expected *A) {
 		expectation.processPassed()
 		return
 	}
-	failMsg := expectation.FailMsg("Expected pointer to [%#v] is NOT the same")
+	failMsg := expectation.FailMsg("Pointer to [%#v] is NOT the same")
 	expectation.processFailure(relPath, line, failMsg, nil)
 
 }
@@ -465,14 +465,14 @@ func assertEq[T comparable](
 			passFunc()
 			return
 		}
-		msg := failMsg("Expected [%#v] IS [%#v]")
+		msg := failMsg("actual:[%#v] IS expected:[%#v]")
 		failFunc(relPath, line, msg, &expected)
 	}
 	if actual == expected {
 		passFunc()
 		return
 	}
-	msg := failMsg("Expected [%#v] is NOT [%#v]")
+	msg := failMsg("actual:[%#v] is NOT expected:[%#v]")
 	failFunc(relPath, line, msg, &expected)
 	return
 

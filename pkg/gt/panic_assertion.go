@@ -37,7 +37,7 @@ func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 				p.processPassed()
 				return
 			}
-			msg := p.FailMsg("Expected panic DID happen")
+			msg := p.FailMsg("Panic DID happen")
 			p.processFailure(relPath, line, msg)
 			return
 		}
@@ -45,7 +45,7 @@ func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 			p.processPassed()
 			return
 		}
-		msg := p.FailMsg("Expected panic did NOT happen")
+		msg := p.FailMsg("Panic did NOT happen")
 		p.processFailure(relPath, line, msg)
 	}()
 
