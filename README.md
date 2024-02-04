@@ -258,13 +258,15 @@ gest -cover
 gest -cover -coverprofile=[any_dir_name]
 ```
 
-##### `-all`
+##### `-all-dirs`
 
 デフォルトで、Gestは`examples`フォルダのテストを実行しません。
-もし`examples`フォルダの中のテストを実行したい場合、もしくは`examples`という名前をつけたサブディレクトリの中にテストがある場合は、`-all`を指定することで、全てのディレクトリ内のファイルがテストの対象になります。
+もし`examples`フォルダの中のテストを実行したい場合、もしくは`examples`という名前をつけたサブディレクトリの中にテストがある場合は、`-all-dirs`を指定することで、全てのディレクトリ内のファイルがテストの対象になります。
 
 ```sh
-gest -all
+gest -all-dirs
+# -run と組み合わせることもできます
+gest -all-dirs -run TestInExamplesDir
 ```
 
 

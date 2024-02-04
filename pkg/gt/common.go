@@ -58,7 +58,7 @@ func InArray[T comparable](val T, array []T) bool {
 	return false
 }
 
-func GetAllTestFileDirectories(isRunAll bool) []string {
+func GetAllTestFileDirectories(isRunInAllDirs bool) []string {
 	var directories []string
 
 	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
@@ -67,7 +67,7 @@ func GetAllTestFileDirectories(isRunAll bool) []string {
 		}
 
 		// skip hidden directories
-		if info.IsDir() && ignoreUsually(path, isRunAll) {
+		if info.IsDir() && ignoreUsually(path, isRunInAllDirs) {
 			return filepath.SkipDir
 		}
 
@@ -89,8 +89,8 @@ func GetAllTestFileDirectories(isRunAll bool) []string {
 }
 
 // Add directory names to ignore only when `-all` flag is NOT specified
-func ignoreUsually(dirName string, runAll bool) bool {
-	if runAll {
+func ignoreUsually(dirName string, runInAllDirs bool) bool {
+	if runInAllDirs {
 		return alwaysIgnore(dirName)
 	}
 
