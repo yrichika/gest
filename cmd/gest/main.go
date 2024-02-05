@@ -173,7 +173,7 @@ func runTestAt(dirName string, flags *FlagHolder) []string {
 	return strings.Split(string(out), "\n")
 }
 
-const startingCoverageMsg = "Creating coverage profile... Executing 'go test -cover'\n"
+const startingCoverageMsg = "Creating coverage profile... Executing 'go test -cover'"
 
 func coverageErrMsg(dirName string) string {
 	return "Error at creating coverage directory: [" + dirName + "]"
@@ -218,7 +218,7 @@ func finalOutput(
 	anyOtherOutput []string,
 	isTestRun bool,
 ) {
-	// FIXME: コンパイルエラー時に何も出力してくれないので、そこを修正する
+	// FIXME: コンパイルエラー時に何も出力してくれない?
 	if len(anyOtherOutput) > 0 {
 		otherMsg := strings.Join(anyOtherOutput, "\n")
 		fmt.Println(separatorOtherMsg + "\n" + otherMsg)
