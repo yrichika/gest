@@ -18,7 +18,7 @@ JavaScript/TypeScriptで[Jest](https://jestjs.io/)を使ったことがある方
 ```go
 func TestSuiteGest(testingT *testing.T) {
 
-  t := CreateTest(testingT)
+  t := gt.CreateTest(testingT)
 
   t.Describe("testing Jest style in Go!", func() {
 
@@ -119,7 +119,7 @@ Jestと少し違うところですが、Jestの場合は、`describe`と`it`を�
 ```go
 func TestSuiteGest(testingT *testing.T) {
 
-  t := CreateTest(testingT)
+  t := gt.CreateTest(testingT)
 
   // Describe()がテストの「外側」に
   t.Describe("関数・テスト1の説明", func() {
@@ -185,7 +185,7 @@ func TestSuiteGest(testingT *testing.T) {
 ```go
 
 func TestAssertions(testingT *testing.T) {
-  t := CreateTest(testingT)
+  t := gt.CreateTest(testingT)
 
   t.Describe("assertion sample", func() {
     t.It("should return true", func() {
