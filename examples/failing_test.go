@@ -6,54 +6,103 @@ import (
 	"github.com/yrichika/gest/pkg/gt"
 )
 
-type MockObject struct {
+type Person struct {
 	Name string
 	Age  int
 }
 
-// gest test for failure
-func TestFailBehavior(testingT *testing.T) {
+// Testing for failure behaviors
+func TestFailureBehaviors(testingT *testing.T) {
 
 	t := gt.CreateTest(testingT)
 
-	t.Describe("Gest test for failure", func() {
-		// 	t.It("should fail and show fail messages", func() {
-		// 		v := false
-		// 		gt.Expect(t, &v).ToBe(true)
-		// 	})
-		// })
+	t.Describe("Tests for failure behaviors", func() {
 
-		// t.It("should fail when nil", func() {
-		// 	var nilValue *int = nil
-		// 	Expect(t, nilValue).Not().ToBeNil()
-		t.It("should fail when two objects are NOT equal", func() {
-			a := MockObject{Name: "hoge", Age: 1}
-			b := MockObject{Name: "hog", Age: 1}
+		t.It("fails with ToBe", func() {
+			v := false
+			gt.Expect(t, &v).ToBe(true)
+			// Output: Failed at [failing_test.go]:line 23: actual:[false] is NOT expected:[true]
+		})
+
+		t.It("fails with Not.ToBe", func() {
+			v := true
+			gt.Expect(t, &v).Not().ToBe(true)
+			// Output: Failed at [failing_test.go]:line 29: actual:[true] IS expected:[true]
+		})
+
+		t.It("fails with ToBe because of not primitive values", func() {
+			a := Person{Name: "hoge", Age: 1}
+			b := Person{Name: "hog", Age: 1}
 
 			gt.Expect(t, &a).ToBe(b)
+			// Output: Failed at [failing_test.go]:line 37: !!ASSERTION ERROR!!: Type [examples.Person] is not supported with `ToBe` method. `ToBe` is intended only for primitive types. Please use `ToDeepEqual` method if it's a struct type.
 		})
-		t.It("pointer equality", func() {
-			p := MockObject{Name: "hoge", Age: 1}
-			o := p
+
+		t.It("fails with ToBeNil", func() {
+			val := 1
+			gt.Expect(t, &val).ToBeNil()
+			// Output: Failed at [failing_test.go]:line 43: [1] is NOT nil
+		})
+
+		t.It("fails with Not.ToBeNil", func() {
+			var val *int = nil
+			gt.Expect(t, val).Not().ToBeNil()
+			// Output: Failed at [failing_test.go]:line 49: Value IS nil
+		})
+
+		t.It("fails with ToBeSamePointerAs", func() {
+			p := Person{Name: "hoge", Age: 1}
+			o := p // not same pointer, copying
+
 			gt.Expect(t, &p).ToBeSamePointerAs(&o)
-		})
-		t.It("toBe messaging test", func() {
-			var a = true
-			gt.Expect(t, &a).Not().ToBe(true)
-
+			// Output: Failed at [failing_test.go]:line 57: Pointer to [examples.Person{Name:"hoge", Age:1}] is NOT the same
 		})
 
-		t.It("panic assertion", func() {
+		t.It("fails with Not.ToBeSamePointerAs", func() {
+			p := Person{Name: "hoge", Age: 1}
+			o := &p
+
+			gt.Expect(t, &p).Not().ToBeSamePointerAs(o)
+			// Output: Failed at [failing_test.go]:line 65: Pointer to [examples.Person{Name:"hoge", Age:1}] IS the same
+		})
+
+		t.It("fails with ToDeepEqual", func() {
+			a := Person{Name: "hoge", Age: 1}
+			b := Person{Name: "hog", Age: 1}
+
+			gt.Expect(t, &a).ToDeepEqual(b)
+			// Output: Failed at [failing_test.go]:line 73: actual:[examples.Person{Name:"hoge", Age:1}] is NOT expected:[examples.Person{Name:"hog", Age:1}]
+		})
+
+		t.It("fails with Not.ToDeepEqual", func() {
+			a := Person{Name: "hoge", Age: 1}
+			b := Person{Name: "hoge", Age: 1}
+
+			gt.Expect(t, &a).Not().ToDeepEqual(b)
+			// Output: Failed at [failing_test.go]:line 81: actual:[examples.Person{Name:"hoge", Age:1}] IS expected:[examples.Person{Name:"hoge", Age:1}]
+		})
+
+		t.It("fail with ExpectPanic", func() {
+			gt.ExpectPanic(t).ToHappen(func() {
+				// no panic
+			})
+			// Output: Panic: [failing_test.go]:line 86: Panic did NOT happen
+		})
+
+		t.It("fail with ExpectPanic Not", func() {
 			gt.ExpectPanic(t).Not().ToHappen(func() {
 				panic("panic!")
 			})
+			// Output: Panic: [failing_test.go]:line 93: Panic DID happen
 		})
-	})
 
-	t.It("PrintWhenFail", func() {
-		var a int = 1
-		var b int = 2
-		gt.PrintWhenFail[int](t, "show this message when fail").Expect(&a).ToBe(b)
+		t.It("LogWhenFail", func() {
+			var a int = 1
+			var b int = 2
+
+			gt.LogWhenFail[int](t, "show this message when fail %#v, %#v").Expect(&a).ToBe(b)
+			// Output: Failed at [failing_test.go]:line 103: show this message when fail 1, 2
+		})
 	})
 
 }
