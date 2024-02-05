@@ -29,7 +29,7 @@ func Expect[A any](test *Test, actual *A) *Expectation[A] {
 // アサートがFailした際に出力する文字列を変更したい場合に、第2引数にその文字列を渡してください。
 // この関数を呼び出した後に、`Expect(*A)`を呼び出してください。この後に呼び出すExpectは
 // 通常の`Expect(*Test, *A)`とは違い、`*Test`を第1引数に取りません。
-func PrintWhenFail[A any](test *Test, failMsg string) *Expectation[A] {
+func LogWhenFail[A any](test *Test, failMsg string) *Expectation[A] {
 	return &Expectation[A]{
 		test:               test,
 		failMsg:            failMsg,
@@ -37,9 +37,9 @@ func PrintWhenFail[A any](test *Test, failMsg string) *Expectation[A] {
 	}
 }
 
-// Use this ONLY AFTER you call `PrintWhenFail()` or any other Expectation constructors
+// Use this ONLY AFTER you call `LogWhenFail()` or any other Expectation constructors
 // if exist
-// `PrintWhenFail()`を呼び出した後にのみ、この関数を呼び出してください。
+// `LogWhenFail()`を呼び出した後にのみ、この関数を呼び出してください。
 // それ以外の場合では意味がない、もしくは正しく動作しない可能性があります。
 func (expectation *Expectation[A]) Expect(actual *A) *Expectation[A] {
 	expectation.test.testingT.Helper()
