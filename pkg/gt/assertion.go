@@ -1,3 +1,4 @@
+// Main assertion methods
 package gt
 
 import (

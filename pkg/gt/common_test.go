@@ -27,7 +27,7 @@ func TestGestCommon(testingT *testing.T) {
 
 	t.Describe("GetAllTestFileDirectories", func() {
 		t.It("should return all test file directories", func() {
-			// WORKING:
+			// TODO:
 			// 実行を仮に別のディレクトリに変更できないか?
 			// もしくは、TempDirを使ってテストディレクトリを作成してテストを実行するか?
 			expectedDirectories := []string{"."}

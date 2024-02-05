@@ -1,3 +1,4 @@
+// Main package for Gest test runner
 package gt
 
 import (

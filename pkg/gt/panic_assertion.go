@@ -1,3 +1,6 @@
+// Assertion for panic.
+// Asserting panic is a bit different from other assertions.
+// That's why it has its own struct type and file.
 package gt
 
 import (
