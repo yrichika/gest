@@ -12,6 +12,7 @@ type Person struct {
 }
 
 // Testing for failure behaviors
+// This is not a usual example or test case, but it's just checking for failure behaviors.
 func TestFailureBehaviors(testingT *testing.T) {
 
 	t := gt.CreateTest(testingT)
