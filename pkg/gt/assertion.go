@@ -468,6 +468,7 @@ func assertEq[T comparable](
 		}
 		msg := failMsg("actual:[%#v] IS expected:[%#v]")
 		failFunc(relPath, line, msg, &expected)
+		return
 	}
 	if actual == expected {
 		passFunc()
@@ -475,8 +476,6 @@ func assertEq[T comparable](
 	}
 	msg := failMsg("actual:[%#v] is NOT expected:[%#v]")
 	failFunc(relPath, line, msg, &expected)
-	return
-
 }
 
 func getTestInfo(skip int) (string, int) {
