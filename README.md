@@ -54,7 +54,9 @@ func TestSuiteGest(testingT *testing.T) {
 
 Gestでは、テストを実行する際に、`gest`コマンドを使います。ただし、`go test`を使っても、Gestで書いたテストをそのまま実行することも可能ですが、`gest`コマンドでテストを実行することで、よりわかりやすいテスト結果を得ることができます。
 
-出力例: TODO: イメージを貼り付ける docs/imagesを参照
+#### 出力サンプル: 
+
+![sample output](/docs/images/sample_output.png)
 
 ### インストール方法
 
@@ -62,25 +64,29 @@ Gestでは、テストを実行する際に、`gest`コマンドを使います�
 Go >= 1.21.5
 ```
 
-#### gestコマンド
+#### gestコマンドとライブラリのインストール
 
 ```sh
+# gestコマンドのインストール
 go install github.com/yrichika/gest/cmd/gest@latest
+# テスト用のライブラリのインストール
+go get github.com/yrichika/gest/pkg/gt@latest
 ```
 
 環境変数の`GOBIN`が設定されていない場合は、`GOBIN`の設定をしてください。そして、`PATH`に`GOBIN`のパスも含めてください。
 `GOBIN`は`~/go/bin`にデフォルトで設定されていることが多いので、わからない方は`~/go/bin`があるか確認してみてください。
 
 
-#### gestフレームワーク
+#### gestのライブラリインポート
 
-TODO:
+gestをプロジェクト内で使う場合は、Gestの`gt`を`import`して使います
 
-gestをプロジェクト内で使う場合は、Gestリポジトリの`gt`を`import`して使います
 
 ```go
 import (
-  "github.com/yrichika/gest/pkg/gt" // <- TODO:
+  "testing"
+
+  "github.com/yrichika/gest/pkg/gt"
 )
 
 func TestSuiteGest(testingT *testing.T) {
@@ -204,8 +210,6 @@ func TestAssertions(testingT *testing.T) {
 
 
 #### `gest`コマンドでテスト実行
-
-TODO:
 
 `go.mod`のあるプロジェクトルートで実行することをおすすめします。ただし、必須ではありません。
 `gest`コマンドは、コマンドの実行ディレクトリから再帰的に`_test.go`で終わるファイル名を探し、それらすべてのテストを実行します。
