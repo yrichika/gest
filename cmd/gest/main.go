@@ -115,6 +115,7 @@ func assortOutput(lines []string, flags *FlagHolder) ([]string, []string, []stri
 		isLineStartsWithOk := strings.HasPrefix(line, "ok")
 		// "FAIL"だけの文字列が、上の判定でのとりこぼしがあるため、再度除外するための判定
 		isLineContainsFail := strings.Contains(line, "FAIL")
+
 		switch {
 		case isLineStartsWithEsc:
 			// output immediately so that users can also see the progress
@@ -165,9 +166,10 @@ func runTestAt(dirName string, flags *FlagHolder) []string {
 		cmd = exec.Command("go", "test", "-run", flags.RunOnly)
 	}
 	cmd.Dir = dirName
-	out, err := cmd.Output()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err)
+		// err string is usually something like "exit status 1"
+		// not really necessary for now
 	}
 
 	return strings.Split(string(out), "\n")
@@ -218,13 +220,12 @@ func finalOutput(
 	anyOtherOutput []string,
 	isTestRun bool,
 ) {
-	// FIXME: コンパイルエラー時に何も出力してくれない?
 	if len(anyOtherOutput) > 0 {
 		otherMsg := strings.Join(anyOtherOutput, "\n")
 		fmt.Println(separatorOtherMsg + "\n" + otherMsg)
 	}
 
-	if !isTestRun {
+	if !isTestRun && len(failedTestResultLines) == 0 {
 		fmt.Println(gt.YellowMsg(noTestRunMsg))
 		return
 	}
