@@ -25,15 +25,16 @@ func TestGestCommon(testingT *testing.T) {
 		})
 	})
 
-	t.Describe("GetAllTestFileDirectories", func() {
-		t.It("should return all test file directories", func() {
+	t2 := CreateTest(testingT)
+	t2.Describe("GetAllTestFileDirectories", func() {
+		t2.It("should return all test file directories", func() {
 			// TODO:
 			// 実行を仮に別のディレクトリに変更できないか?
 			// もしくは、TempDirを使ってテストディレクトリを作成してテストを実行するか?
 			expectedDirectories := []string{"."}
 
 			result := GetAllTestFileDirectories(false)
-			Expect(t, &result).ToDeepEqual(expectedDirectories)
+			Expect(t2, &result).ToDeepEqual(expectedDirectories)
 		})
 	})
 }
