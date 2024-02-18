@@ -45,7 +45,8 @@ func TestSuiteGestRunner(testingT *testing.T) {
 		})
 	})
 
-	t.Skip().Describe("this test should be skipped", func() {
-		Expect(t, &mockTrue).ToBe(false) // this should not be executed
+	t2 := CreateTest(testingT)
+	t2.Skip().Describe("this test should be skipped", func() {
+		Expect(t2, &mockTrue).ToBe(false) // this should not be executed
 	})
 }

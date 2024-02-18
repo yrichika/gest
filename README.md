@@ -102,7 +102,6 @@ func TestSuiteGest(testingT *testing.T) {
 Gestは、Goの標準のテスト関数の中にテストを作成します。
 
 まずは、Gestのテストを実行するために、`gt.CreateTest()`で、`*Test`を取得してください。
-`*Test`の
 
 ```go
 // Goテストで使われる`t`と混同しないために、
@@ -119,30 +118,33 @@ func TestSuiteGest(testingT *testing.T) {
 
 Jestと少し違うところですが、Jestの場合は、`describe`と`it`を自由にネストすることができますが、Gestでは基本的に、`Describe`の中のコールバック関数の中に、1階層の`It`メソッドを書く構造になります。`Describe`の中に`Describe`、`It`の中に`It`もしくは、`It`の中に`Describe`といったような、自由なネストをすることはできません。
 ただし、1つのGoテスト関数の中に、複数の`Describe`を書くことができ、`Describe`の中に、複数の`It`テストを書くことができます。
+複数の`Describe`を書く際は、その都度`gt.CreateTest`で、`Test`オブジェクトを作成してください。
 
 その際に、必ず`Describe`メソッドが`It`メソッドの外側になるように書いてください。逆に書いた場合はテストが実行されません。
 
 ```go
 func TestSuiteGest(testingT *testing.T) {
 
-  t := gt.CreateTest(testingT)
+  t1 := gt.CreateTest(testingT)
 
   // Describe()がテストの「外側」に
-  t.Describe("関数・テスト1の説明", func() {
+  t1.Describe("関数・テスト1の説明", func() {
     // It()はDescribe()の中に書いてください。
-    t.It("テスト1のテスト1", func() {
+    t1.It("テスト1のテスト1", func() {
       // ...
     })
 
-    t.It("テスト1のテスト2", func() {
+    t1.It("テスト1のテスト2", func() {
       // ...
     })
 
   })
 
+  // 新しいテスト(t2 *Test)を作成し、
+  t2 := gt.CreateTest(testingT)
   // Describe()を複数実行することが可能です。
-  t.Describe("関数・テスト2の説明", func() {
-    t.It("テスト2のテスト内容", func() {
+  t2.Describe("関数・テスト2の説明", func() {
+    t2.It("テスト2のテスト内容", func() {
       // ...
     })
   })
@@ -316,6 +318,44 @@ gt.Expect(t, &a).ToBeSamePointerAs(p)
 var nilValue *int = nil
 gt.Expect(t, nilValue).ToBeNil()
 ```
+
+#### `ToMatchRegex(string)`
+
+文字列が正規表現と一致するかアサートします。
+
+```go
+str := "foo"
+gt.Expect(t, &str).ToMatchRegex("^foo$")
+```
+
+#### `ToContainString(string)`
+
+Actualに指定した文字列が含まれるかアサートします。
+
+```go
+str := "hello, world"
+gt.Expect(t, &str).ToContainString("world")
+```
+
+#### `ToBe_(func(T, T) bool, T)`
+
+`ToBe`に`_`が付いた`ToBe_`は第一引数に、比較する関数を取り、actualの値とexpectedの値を比較します。
+「～以上」や、「～以下」のように、2つの値を比較したい場合に使います。
+`gt.GreaterThan`などの比較用関数は用意されているので、比較用関数は自作しなくても大丈夫です。
+ただし、自作して、引数に渡すことも可能です。
+
+
+```go
+val := 10
+gt.Expect(t, &val).ToBe_(gt.GreaterThan, 1)
+gt.Expect(t, &val).ToBe_(gt.GreaterThanOrEq, 10)
+gt.Expect(t, &val).ToBe_(gt.LessThan, 11)
+gt.Expect(t, &val).ToBe_(gt.LessThanOrEq, 10)
+// Betweenに指定した数値(min)と、expectedに指定した値(max)の間にある場合はpassします
+gt.Expect(t, &val).ToBe_(gt.Between(1), 10)
+
+```
+
 
 #### `Not()`
 

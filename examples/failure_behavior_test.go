@@ -83,6 +83,30 @@ func TestFailureBehaviors(testingT *testing.T) {
 			// Output: Failed at [failing_test.go]:line 81: actual:[examples.Person{Name:"hoge", Age:1}] IS expected:[examples.Person{Name:"hoge", Age:1}]
 		})
 
+		t.It("fail with ToMatchRegex", func() {
+			a := "hoge"
+			gt.Expect(t, &a).ToMatchRegex("^foo$")
+			// Output: Failed at [failure_behavior_test.go]:line 88: actual:["hoge"] does NOT match with regex expected:["^foo$"]
+		})
+
+		t.It("fail with ToMatchRegex NOT", func() {
+			a := "hoge"
+			gt.Expect(t, &a).Not().ToMatchRegex("^hoge$")
+			// Output: Failed at [failure_behavior_test.go]:line 94: actual:["hoge"] DOES match with regex expected:["^hoge$"]
+		})
+
+		t.It("fail with ToContainString", func() {
+			a := "hello world"
+			gt.Expect(t, &a).ToContainString("bar")
+			// Output: Failed at [failure_behavior_test.go]:line 100: actual:["hello world"] does NOT contain expected:["bar"]
+		})
+
+		t.It("fail with ToContainString NOT", func() {
+			a := "hello world"
+			gt.Expect(t, &a).Not().ToContainString("world")
+			// Output: Failed at [failure_behavior_test.go]:line 106: actual:["hello world"] DOES contain expected:["world"]
+		})
+
 		t.It("fail with ExpectPanic", func() {
 			gt.ExpectPanic(t).ToHappen(func() {
 				// no panic
@@ -103,6 +127,16 @@ func TestFailureBehaviors(testingT *testing.T) {
 
 			gt.LogWhenFail[int](t, "show this message when fail %#v, %#v").Expect(&a).ToBe(b)
 			// Output: Failed at [failing_test.go]:line 103: show this message when fail 1, 2
+		})
+
+	})
+
+	t2 := gt.CreateTest(testingT)
+	t2.Describe("Tests for failure behaviors with ToBe_", func() {
+		t2.It("fails with ToBe_", func() {
+			intVal1 := 10
+			gt.Expect(t2, &intVal1).ToBe_(gt.GreaterThan, 11)
+			// Output: Failed at [failure_behavior_test.go]:line 139: compared actual:[10] and expected:[11]
 		})
 	})
 
