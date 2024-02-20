@@ -288,6 +288,7 @@ gest -all-dirs -run TestInExamplesDir
 gt.Expect(t, &r).ToBe(true)
 ```
 
+
 #### `ToDeepEqual(T)`
 
 2つの構造体が同じが確認できます。内部の処理では、`reflect.DeepEqual()`を使って、2つの値の比較を行っています。
@@ -353,6 +354,18 @@ gt.Expect(t, &val).ToBe_(gt.LessThan, 11)
 gt.Expect(t, &val).ToBe_(gt.LessThanOrEq, 10)
 // Betweenに指定した数値(min)と、expectedに指定した値(max)の間にある場合はpassします
 gt.Expect(t, &val).ToBe_(gt.Between(1), 10)
+
+// 時間を比較することもできます
+time := time.Now()
+past := time.Now().Add(-1 * time.Minute)
+future := time.Now().Add(1 * time.Minute)
+gt.Expect(t, &time).ToBe_(gt.After, past)
+gt.Expect(t, &time).ToBe_(gt.AfterOrEq, past)
+gt.Expect(t, &time).ToBe_(gt.Before, future)
+gt.Expect(t, &time).ToBe_(gt.BeforeOrEq, future)
+// TimeBetweenに指定した時間(from)と、expectedに指定した値(to)の間にある場合はpass
+gt.Expect(t, &time).ToBe_(gt.TimeBetween(past), future)
+
 
 ```
 

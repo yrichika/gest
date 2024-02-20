@@ -1,11 +1,14 @@
 package gt
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestOrderableAssertions(testingT *testing.T) {
 	t := CreateTest(testingT)
 
-	t.Describe("ToBe_", func() {
+	t.Describe("ToBe_ with number comparators", func() {
 		t.It("should pass when the value is in the comparator range", func() {
 			var intVal1 int = 10
 			Expect(t, &intVal1).ToBe_(GreaterThan, 1)
@@ -51,5 +54,35 @@ func TestOrderableAssertions(testingT *testing.T) {
 			valBt4 := 4
 			Expect(t2, &valBt4).Not().ToBe_(Between(1), 3)
 		})
+	})
+
+	t3 := CreateTest(testingT)
+	t3.Describe("ToBe_ with time comparators", func() {
+		t3.It("should pass when value is in the comparator range", func() {
+			now := time.Now()
+
+			past := time.Now().Add(-1 * time.Minute)
+			Expect(t3, &past).ToBe_(Before, now)
+
+			future := time.Now().Add(1 * time.Minute)
+			Expect(t3, &future).ToBe_(After, now)
+
+			// Equality assertions
+			Expect(t3, &now).ToBe_(BeforeOrEq, now)
+			Expect(t3, &now).ToBe_(AfterOrEq, now)
+		})
+
+		t3.It("should pass when value is NOT in the comparator range", func() {
+			past := time.Now().Add(-1 * time.Minute)
+			Expect(t3, &past).Not().ToBe_(After, time.Now())
+		})
+
+		t3.It("should pass when time value is in between", func() {
+			past := time.Now().Add(-1 * time.Minute)
+			future := time.Now().Add(1 * time.Minute)
+			now := time.Now()
+			Expect(t3, &now).ToBe_(TimeBetween(past), future)
+		})
+
 	})
 }
