@@ -1,6 +1,9 @@
 package gt
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestComparableAssertions(testingT *testing.T) {
 	t := CreateTest(testingT)
@@ -28,6 +31,14 @@ func TestComparableAssertions(testingT *testing.T) {
 			var complexVal1 complex128 = 1 + 1i
 			var complexVal2 complex128 = 1 + 1i
 			Expect(t, &complexVal1).ToBe(complexVal2)
+
+			time1 := time.Now()
+			time2 := time1
+			Expect(t, &time1).ToBe(time2)
+
+			person1 := Person{Name: "hoge", Age: 1}
+			person2 := Person{Name: "hoge", Age: 1}
+			Expect(t, &person1).ToBe(person2)
 		})
 
 		t.It("should pass when two values are NOT equal", func() {
