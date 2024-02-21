@@ -3,7 +3,6 @@ package gt
 
 import (
 	"fmt"
-	"reflect"
 	"regexp"
 	"runtime"
 	"strings"
@@ -85,34 +84,6 @@ func (expectation *Expectation[A]) ToBeNil() {
 	}
 	failMsg := expectation.FailMsg("[%#v] is NOT nil")
 	expectation.processFailure(relPath, line, failMsg, nil)
-}
-
-// two structs equality
-// 2つの構造体の等価性を確認します。等価性は、構造体のフィールドの値が全て等しいことを意味します。
-// 2つの構造体が等しい場合はアサートがpassします。
-// 等価性の確認に、内部では`reflect.DeepEqual()`が使用されます。
-func (expectation *Expectation[A]) ToDeepEqual(expected A) {
-	expectation.test.testingT.Helper()
-
-	relPath, line := getTestInfo(1)
-
-	expectation.test.subtotal++
-	if expectation.reverseExpectation {
-		if !reflect.DeepEqual(*expectation.actual, expected) {
-			expectation.processPassed()
-			return
-		}
-		failMsg := expectation.FailMsg("actual:[%#v] IS expected:[%#v]")
-		expectation.processFailure(relPath, line, failMsg, &expected)
-		return
-	}
-
-	if reflect.DeepEqual(*expectation.actual, expected) {
-		expectation.processPassed()
-		return
-	}
-	failMsg := expectation.FailMsg("actual:[%#v] is NOT expected:[%#v]")
-	expectation.processFailure(relPath, line, failMsg, &expected)
 }
 
 // Assertion for pointer values.
@@ -198,6 +169,8 @@ func (expectation *Expectation[A]) ToContainString(expected string) {
 	expectedForFailMsg := any(expected).(A)
 	expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
 }
+
+// TODO: array/sliceが同じかどうか
 
 // TODO: actualの配列の中にexpectedが含まれているかどうか
 // func (expectation Expectation[A]) ToContainElem(expected A) {

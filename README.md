@@ -281,21 +281,16 @@ gest -all-dirs -run TestInExamplesDir
 
 #### `ToBe(T)`
 
-これで、`int`系、`bool`, `string`, `complex64`, etc、プリミティブ型はすべてアサートすることができます。
+これで、`int`系、`bool`, `string`, `complex64`, etc、プリミティブ型と`time.Time`、カスタムの`struct`型はすべてアサートすることができます。
 
+構造体が同じかどうかの確認は、内部の処理では、`reflect.DeepEqual()`を使って、2つの値の比較を行っています。
 
 ```go
 gt.Expect(t, &r).ToBe(true)
-```
 
-
-#### `ToDeepEqual(T)`
-
-2つの構造体が同じが確認できます。内部の処理では、`reflect.DeepEqual()`を使って、2つの値の比較を行っています。
-
-```go
+// 構造体の場合
 expected := User{Name: "john", Age: 10}
-gt.Expect(t, &r).ToDeepEqual(expected)
+gt.Expect(t, &r).ToBe(expected)
 ```
 
 

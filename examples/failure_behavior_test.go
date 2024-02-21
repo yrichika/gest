@@ -2,6 +2,7 @@ package examples
 
 import (
 	"testing"
+	"time"
 
 	"github.com/yrichika/gest/pkg/gt"
 )
@@ -29,14 +30,6 @@ func TestFailureBehaviors(testingT *testing.T) {
 			v := true
 			gt.Expect(t, &v).Not().ToBe(true)
 			// Output: Failed at [failing_test.go]:line 29: actual:[true] IS expected:[true]
-		})
-
-		t.It("fails with ToBe because of not primitive values", func() {
-			a := Person{Name: "hoge", Age: 1}
-			b := Person{Name: "hog", Age: 1}
-
-			gt.Expect(t, &a).ToBe(b)
-			// Output: Failed at [failing_test.go]:line 37: !!ASSERTION ERROR!!: Type [examples.Person] is not supported with `ToBe` method. `ToBe` is intended only for primitive types. Please use `ToDeepEqual` method if it's a struct type.
 		})
 
 		t.It("fails with ToBeNil", func() {
@@ -67,19 +60,33 @@ func TestFailureBehaviors(testingT *testing.T) {
 			// Output: Failed at [failing_test.go]:line 65: Pointer to [examples.Person{Name:"hoge", Age:1}] IS the same
 		})
 
-		t.It("fails with ToDeepEqual", func() {
+		t.It("fails with ToBe with time.Time", func() {
+			time1 := time.Now()
+			time2, _ := time.Parse("2006-01-02", "2021-01-01")
+			gt.Expect(t, &time1).ToBe(time2)
+			// Output: Failed at [failure_behavior_test.go]:line 66: actual:[time.Date(2024, time.February, 21, 18, 12, 6, 142277000, time.Local)] is NOT expected:[time.Date(2021, time.January, 1, 0, 0, 0, 0, time.UTC)]
+		})
+
+		t.It("fails with Not.ToBe with time.Time", func() {
+			time1 := time.Now()
+			time2 := time1
+			gt.Expect(t, &time1).Not().ToBe(time2)
+			// Output: Failed at [failure_behavior_test.go]:line 74: actual:[time.Date(2024, time.February, 21, 18, 12, 6, 142597000, time.Local)] IS expected:[time.Date(2024, time.February, 21, 18, 12, 6, 142597000, time.Local)]
+		})
+
+		t.It("fails with ToBe with struct type", func() {
 			a := Person{Name: "hoge", Age: 1}
 			b := Person{Name: "hog", Age: 1}
 
-			gt.Expect(t, &a).ToDeepEqual(b)
-			// Output: Failed at [failing_test.go]:line 73: actual:[examples.Person{Name:"hoge", Age:1}] is NOT expected:[examples.Person{Name:"hog", Age:1}]
+			gt.Expect(t, &a).ToBe(b)
+			// Output: Failed at [failure_behavior_test.go]:line 87: actual:[examples.Person{Name:"hoge", Age:1}] is NOT expected:[examples.Person{Name:"hog", Age:1}]
 		})
 
-		t.It("fails with Not.ToDeepEqual", func() {
+		t.It("fails with Not.ToBe with struct type", func() {
 			a := Person{Name: "hoge", Age: 1}
 			b := Person{Name: "hoge", Age: 1}
 
-			gt.Expect(t, &a).Not().ToDeepEqual(b)
+			gt.Expect(t, &a).Not().ToBe(b)
 			// Output: Failed at [failing_test.go]:line 81: actual:[examples.Person{Name:"hoge", Age:1}] IS expected:[examples.Person{Name:"hoge", Age:1}]
 		})
 

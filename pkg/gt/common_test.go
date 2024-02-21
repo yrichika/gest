@@ -34,7 +34,7 @@ func TestGestCommon(testingT *testing.T) {
 			expectedDirectories := []string{"."}
 
 			result := GetAllTestFileDirectories(false)
-			Expect(t2, &result).ToDeepEqual(expectedDirectories)
+			Expect(t2, &result).ToBe(expectedDirectories)
 		})
 	})
 }
