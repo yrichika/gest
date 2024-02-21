@@ -366,7 +366,7 @@ func (expectation *Expectation[A]) deepEq(actual any, expected A) {
 	relPath, line := getTestInfo(2)
 
 	if expectation.reverseExpectation {
-		if !reflect.DeepEqual(*expectation.actual, expected) {
+		if !reflect.DeepEqual(actual, expected) {
 			expectation.processPassed()
 			return
 		}
@@ -375,7 +375,7 @@ func (expectation *Expectation[A]) deepEq(actual any, expected A) {
 		return
 	}
 
-	if reflect.DeepEqual(*expectation.actual, expected) {
+	if reflect.DeepEqual(actual, expected) {
 		expectation.processPassed()
 		return
 	}
