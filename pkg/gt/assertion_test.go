@@ -2,6 +2,7 @@ package gt
 
 import (
 	"testing"
+	"time"
 )
 
 type Person struct {
@@ -48,6 +49,14 @@ func TestExpectAssertions(testingT *testing.T) {
 			var complexVal1 complex128 = 1 + 1i
 			var complexVal2 complex128 = 1 + 1i
 			Expect(t2, &complexVal1).ToBe(complexVal2)
+
+			time1 := time.Now()
+			time2 := time1
+			Expect(t2, &time1).ToBe(time2)
+
+			person1 := Person{Name: "hoge", Age: 1}
+			person2 := Person{Name: "hoge", Age: 1}
+			Expect(t2, &person1).ToBe(person2)
 		})
 
 		t2.It("should pass when two values are NOT equal", func() {
@@ -69,23 +78,6 @@ func TestExpectAssertions(testingT *testing.T) {
 			a := 1
 			b := 1
 			Expect(t3, &a).Not().ToBeSamePointerAs(&b)
-		})
-	})
-
-	t4 := CreateTest(testingT)
-	t4.Describe("ToDeepEqual", func() {
-		t4.It("should pass when two objects are equal", func() {
-			a := Person{Name: "hoge", Age: 1}
-			b := Person{Name: "hoge", Age: 1}
-
-			Expect(t4, &a).ToDeepEqual(b)
-		})
-
-		t4.It("should pass when two objects are NOT equal", func() {
-			a := Person{Name: "hoge", Age: 1}
-			b := Person{Name: "foo", Age: 1}
-
-			Expect(t4, &a).Not().ToDeepEqual(b)
 		})
 	})
 

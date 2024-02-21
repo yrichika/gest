@@ -1,6 +1,11 @@
 package gt
 
-// Assertion for primitive values.
+import (
+	"reflect"
+	"time"
+)
+
+// Assertion for primitive values, time.Time and custom struct types.
 // Types must be the same.
 // プリミティブ型の値を比較します。値が同じ場合はアサートがpassします。
 // アサート対象の値と、想定している値は同じ型である必要があります。
@@ -43,9 +48,13 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 		expectation.complex64Eq(actual, expected)
 	case complex128:
 		expectation.complex128Eq(actual, expected)
+	case time.Time:
+		expectation.timeEq(actual, expected)
+	case any:
+		expectation.deepEq(actual, expected)
 	default:
 		relPath, line := getTestInfo(1)
-		msg := expectation.FailMsg("!!ASSERTION ERROR!!: Type [%T] is not supported with `ToBe` method. `ToBe` is intended only for primitive types. Please use `ToDeepEqual` method if it's a struct type.")
+		msg := expectation.FailMsg("!!ASSERTION ERROR!!: Type [%T] is not supported with `ToBe` method.")
 		expectation.processFailure(relPath, line, msg, nil)
 	}
 }
@@ -324,4 +333,52 @@ func assertEq[T comparable](
 	}
 	msg := failMsg("actual:[%#v] is NOT expected:[%#v]")
 	failFunc(relPath, line, msg, &expected)
+}
+
+// REFACTOR:
+func (expectation *Expectation[A]) timeEq(actual time.Time, expected A) {
+	expectation.test.testingT.Helper()
+
+	relPath, line := getTestInfo(2)
+
+	if expectation.reverseExpectation {
+		if !actual.Equal(any(expected).(time.Time)) {
+			expectation.processPassed()
+			return
+		}
+		failMsg := expectation.FailMsg("actual:[%#v] IS expected:[%#v]")
+		expectation.processFailure(relPath, line, failMsg, &expected)
+		return
+	}
+
+	if actual.Equal(any(expected).(time.Time)) {
+		expectation.processPassed()
+		return
+	}
+	failMsg := expectation.FailMsg("actual:[%#v] is NOT expected:[%#v]")
+	expectation.processFailure(relPath, line, failMsg, &expected)
+}
+
+// REFACTOR:
+func (expectation *Expectation[A]) deepEq(actual any, expected A) {
+	expectation.test.testingT.Helper()
+
+	relPath, line := getTestInfo(2)
+
+	if expectation.reverseExpectation {
+		if !reflect.DeepEqual(*expectation.actual, expected) {
+			expectation.processPassed()
+			return
+		}
+		failMsg := expectation.FailMsg("actual:[%#v] IS expected:[%#v]")
+		expectation.processFailure(relPath, line, failMsg, &expected)
+		return
+	}
+
+	if reflect.DeepEqual(*expectation.actual, expected) {
+		expectation.processPassed()
+		return
+	}
+	failMsg := expectation.FailMsg("actual:[%#v] is NOT expected:[%#v]")
+	expectation.processFailure(relPath, line, failMsg, &expected)
 }
