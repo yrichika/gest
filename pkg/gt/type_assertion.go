@@ -1,6 +1,6 @@
 package gt
 
-// OfBool, OfInt, OfString などを使い、値の比較のアサーションを行います。
+// OfBool, OfInt, OfString などを使い、型のアサーションを行います。
 // e.g. `Expect(t, &val).ToBeType(OfInt)`
 func (expectation *Expectation[A]) ToBeType(typeComparator func(*A) bool) {
 	expectation.test.testingT.Helper()
