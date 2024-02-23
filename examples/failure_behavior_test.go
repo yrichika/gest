@@ -147,4 +147,29 @@ func TestFailureBehaviors(testingT *testing.T) {
 		})
 	})
 
+	t3 := gt.CreateTest(testingT)
+	t3.Describe("Tests for failure behaviors with Test method", func() {
+		// Testing `Test` method. It should work exactly the same as `It` method.
+		t3.Test("fails with Test method", func() {
+			v := false
+			gt.Expect(t3, &v).ToBe(true)
+			// Output: Failed at [failure_behavior_test.go]:line 154: actual:[false] is NOT expected:[true]
+		})
+	})
+
+	t4 := gt.CreateTest(testingT)
+	t4.Describe("type assertion failure", func() {
+		t4.It("fails with ToBeType", func() {
+			valInt := 1
+			gt.Expect(t4, &valInt).ToBeType(gt.OfString)
+			// Output: Failed at [failure_behavior_test.go]:line 163: actual:[int] is NOT expected type
+		})
+
+		t4.It("fails with ToBeType with Not", func() {
+			valStr := "abc"
+			gt.Expect(t4, &valStr).Not().ToBeType(gt.OfString)
+			// Output: Failed at [failure_behavior_test.go]:line 169: actual:[string] IS expected type
+		})
+	})
+
 }

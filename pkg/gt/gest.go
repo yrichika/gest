@@ -183,6 +183,11 @@ func (t *Test) It(description string, body func()) {
 	t.isThisTestFailed = false
 }
 
+// alias if It. Just for readability/expressiveness
+func (t *Test) Test(description string, body func()) {
+	t.It(description, body)
+}
+
 // テストを非同期で実行します。
 // 内部的には、`testing.T.Parallel()`を呼び出しています。
 func (t *Test) Async() *Test {

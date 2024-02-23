@@ -5,6 +5,15 @@ import (
 	"time"
 )
 
+// TODO:
+// func (expectation *Expectation[A]) ToBeAnyOneOf(expected ...A) {
+// 	expectation.test.testingT.Helper()
+
+// 	for _, e := range expected {
+// 		// ToBeのメインロジックを分割して、ここで呼ぶ
+// 	}
+// }
+
 // Assertion for primitive values, time.Time and custom struct types.
 // Types must be the same.
 // プリミティブ型の値を比較します。値が同じ場合はアサートがpassします。
@@ -13,6 +22,7 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 	expectation.test.testingT.Helper()
 
 	expectation.test.subtotal++
+	// TODO: ここだけ切り離して別の関数にする
 	switch actual := any(*expectation.actual).(type) {
 	case int:
 		expectation.intEq(actual, expected)
@@ -48,6 +58,8 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 		expectation.complex64Eq(actual, expected)
 	case complex128:
 		expectation.complex128Eq(actual, expected)
+	case time.Duration:
+		expectation.durationEq(actual, expected)
 	case time.Time:
 		expectation.timeEq(actual, expected)
 	case any:
@@ -296,6 +308,21 @@ func (expectation *Expectation[A]) stringEq(actual string, expected A) {
 	assertEq[string](
 		actual,
 		any(expected).(string),
+		expectation.reverseExpectation,
+		expectation.FailMsg,
+		processFailure,
+		expectation.processPassed,
+		expectation.test.testingT.Helper,
+	)
+}
+
+func (expectation *Expectation[A]) durationEq(actual time.Duration, expected A) {
+	expectation.test.testingT.Helper()
+
+	processFailure := any(expectation.processFailure).(func(string, int, string, *time.Duration))
+	assertEq[time.Duration](
+		actual,
+		any(expected).(time.Duration),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
 		processFailure,

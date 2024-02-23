@@ -32,6 +32,10 @@ func TestComparableAssertions(testingT *testing.T) {
 			var complexVal2 complex128 = 1 + 1i
 			Expect(t, &complexVal1).ToBe(complexVal2)
 
+			duration1 := 1 * time.Second
+			duration2 := 1 * time.Second
+			Expect(t, &duration1).ToBe(duration2)
+
 			time1 := time.Now()
 			time2 := time1
 			Expect(t, &time1).ToBe(time2)
