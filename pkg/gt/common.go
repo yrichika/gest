@@ -42,6 +42,7 @@ func itFuncFailMsg(description string, elapsed time.Duration) string {
 
 func itFuncPassMsg(description string, elapsed time.Duration) string {
 	timeInSeconds := fmt.Sprintf("%.3f", elapsed.Seconds())
+	// TODO: 'it' should be switchable to 'test'
 	return GreenMsg("    - pass: it \"" + description + "\"  (" + timeInSeconds + "s)")
 }
 

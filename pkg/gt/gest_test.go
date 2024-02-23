@@ -32,6 +32,10 @@ func TestSuiteGestRunner(testingT *testing.T) {
 			Expect(t, &mockTrue).ToBe(true)
 		})
 
+		t.Test("Test function should work as It does", func() {
+			Expect(t, &mockTrue).ToBe(true)
+		})
+
 		t.Async().It("should be async", func() {
 			// actually not sure how to Parallel functionality,
 			// but it should be working

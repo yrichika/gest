@@ -22,8 +22,14 @@ func TestOrderableAssertions(testingT *testing.T) {
 			var float32Val1 float32 = 10.2
 			Expect(t, &float32Val1).ToBe_(GreaterThan, 10.1)
 
+			var duration time.Duration = 2 * time.Second
+			Expect(t, &duration).ToBe_(GreaterThan, 1*time.Second)
+
 			valBt := 1
 			Expect(t, &valBt).ToBe_(Between(1), 11)
+
+			var durationBt time.Duration = 2 * time.Second
+			Expect(t, &durationBt).ToBe_(Between(1*time.Second), 3*time.Second)
 		})
 
 		t.It("should pass when the value is NOT in the comparator range", func() {

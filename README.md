@@ -122,6 +122,9 @@ Jestと少し違うところですが、Jestの場合は、`describe`と`it`を�
 
 その際に、必ず`Describe`メソッドが`It`メソッドの外側になるように書いてください。逆に書いた場合はテストが実行されません。
 
+また、`It`だと表現しにくい場合は、`Test`メソッドによって表現を変えることができます。
+ただし、処理の内容は同じです。
+
 ```go
 func TestSuiteGest(testingT *testing.T) {
 
@@ -135,6 +138,11 @@ func TestSuiteGest(testingT *testing.T) {
     })
 
     t1.It("テスト1のテスト2", func() {
+      // ...
+    })
+
+    // Itの代わりにTestを使うこともできます。
+    t1.Test("テスト1のテスト2", func () {
       // ...
     })
 
@@ -281,7 +289,7 @@ gest -all-dirs -run TestInExamplesDir
 
 #### `ToBe(T)`
 
-これで、`int`系、`bool`, `string`, `complex64`, etc、プリミティブ型と`time.Time`、カスタムの`struct`型はすべてアサートすることができます。
+これで、`int`系、`bool`, `string`, `complex64`, etc、プリミティブ型と`time.Time`、`time.Duration`、`struct`型はすべてアサートすることができます。
 
 構造体が同じかどうかの確認は、内部の処理では、`reflect.DeepEqual()`を使って、2つの値の比較を行っています。
 
@@ -349,8 +357,11 @@ gt.Expect(t, &val).ToBe_(gt.LessThan, 11)
 gt.Expect(t, &val).ToBe_(gt.LessThanOrEq, 10)
 // Betweenに指定した数値(min)と、expectedに指定した値(max)の間にある場合はpassします
 gt.Expect(t, &val).ToBe_(gt.Between(1), 10)
+// time.Duration
+duration := 2 * time.Second
+gt.Expect(t, &duration).ToBe_(gt.GreaterThan, 1 * time.Second)
 
-// 時間を比較することもできます
+// 時間を比較する際は、After, Beforeを使います
 time := time.Now()
 past := time.Now().Add(-1 * time.Minute)
 future := time.Now().Add(1 * time.Minute)
@@ -361,6 +372,33 @@ gt.Expect(t, &time).ToBe_(gt.BeforeOrEq, future)
 // TimeBetweenに指定した時間(from)と、expectedに指定した値(to)の間にある場合はpass
 gt.Expect(t, &time).ToBe_(gt.TimeBetween(past), future)
 
+
+```
+
+
+#### `ToBeType(func (*T) bool)`
+
+値の型が、どの型であるかをアサートすることができます。
+引数に渡すコールバック関数は、型をアサーとするための関数です。
+これらは、すでに用意されているので、そのまま使ってください
+
+- `OfBool`
+- `OfInt`
+- `OfInt16`
+- `OfInt32`
+- `OfString`
+- `OfArray`
+- `OfMap`
+- ...etc
+
+基本的な型のほとんどが用意されています
+
+```go
+boolVal := true
+gt.Expect(t, &boolVal).ToBeType(gt.OfBool)
+
+intVal := 1
+gt.Expect(t, &intVal).ToBeType(gt.OfInt)
 
 ```
 
