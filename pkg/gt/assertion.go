@@ -170,20 +170,6 @@ func (expectation *Expectation[A]) ToContainString(expected string) {
 	expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
 }
 
-// TODO: array/sliceが同じかどうか
-
-// TODO: actualの配列の中にexpectedが含まれているかどうか
-// func (expectation Expectation[A]) ToContainElem(expected A) {
-// 	expectation.test.testingT.Helper()
-//
-// }
-
-// TODO: expectedに指定した配列の中に要素があるかどうか
-// func (expectation Expectation[A]) ToBeIn(expected []A) {
-// 	expectation.test.testingT.Helper()
-//
-// }
-
 // TODO: implement:
 // assert json value the same
 
@@ -208,7 +194,7 @@ func (expectation Expectation[A]) processFailure(
 	relPath string,
 	line int,
 	errorMsg string,
-	expected *A,
+	expected any,
 ) {
 	expectation.test.testingT.Helper()
 
@@ -236,7 +222,7 @@ func (expectation *Expectation[A]) formatFailMessage(
 	relPath string,
 	line int,
 	errorMsg string,
-	expected *A,
+	expected any,
 ) string {
 	expectation.test.testingT.Helper()
 
@@ -244,7 +230,7 @@ func (expectation *Expectation[A]) formatFailMessage(
 		if expected != nil {
 			return fmt.Sprintf(
 				"Failed at [%s]:line %d: %s",
-				relPath, line, fmt.Sprintf(errorMsg, *expectation.actual, *expected),
+				relPath, line, fmt.Sprintf(errorMsg, *expectation.actual, expected),
 			)
 		}
 		return fmt.Sprintf(

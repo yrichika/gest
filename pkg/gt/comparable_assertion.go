@@ -5,15 +5,6 @@ import (
 	"time"
 )
 
-// TODO:
-// func (expectation *Expectation[A]) ToBeAnyOneOf(expected ...A) {
-// 	expectation.test.testingT.Helper()
-
-// 	for _, e := range expected {
-// 		// ToBeのメインロジックを分割して、ここで呼ぶ
-// 	}
-// }
-
 // Assertion for primitive values, time.Time and custom struct types.
 // Types must be the same.
 // プリミティブ型の値を比較します。値が同じ場合はアサートがpassします。
@@ -22,7 +13,6 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 	expectation.test.testingT.Helper()
 
 	expectation.test.subtotal++
-	// TODO: ここだけ切り離して別の関数にする
 	switch actual := any(*expectation.actual).(type) {
 	case int:
 		expectation.intEq(actual, expected)
@@ -77,13 +67,12 @@ func (expectation *Expectation[A]) intEq(
 ) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *int))
-	assertEq[int](
+	assertEq(
 		actual,
 		any(expected).(int),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -92,13 +81,12 @@ func (expectation *Expectation[A]) intEq(
 func (expectation *Expectation[A]) int8Eq(actual int8, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *int8))
-	assertEq[int8](
+	assertEq(
 		actual,
 		any(expected).(int8),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -107,13 +95,12 @@ func (expectation *Expectation[A]) int8Eq(actual int8, expected A) {
 func (expectation *Expectation[A]) int16Eq(actual int16, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *int16))
-	assertEq[int16](
+	assertEq(
 		actual,
 		any(expected).(int16),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -121,13 +108,12 @@ func (expectation *Expectation[A]) int16Eq(actual int16, expected A) {
 func (expectation *Expectation[A]) int32Eq(actual int32, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *int32))
-	assertEq[int32](
+	assertEq(
 		actual,
 		any(expected).(int32),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -135,13 +121,12 @@ func (expectation *Expectation[A]) int32Eq(actual int32, expected A) {
 func (expectation *Expectation[A]) int64Eq(actual int64, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *int64))
-	assertEq[int64](
+	assertEq(
 		actual,
 		any(expected).(int64),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -149,13 +134,12 @@ func (expectation *Expectation[A]) int64Eq(actual int64, expected A) {
 func (expectation *Expectation[A]) uintEq(actual uint, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *uint))
-	assertEq[uint](
+	assertEq(
 		actual,
 		any(expected).(uint),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -163,13 +147,12 @@ func (expectation *Expectation[A]) uintEq(actual uint, expected A) {
 func (expectation *Expectation[A]) uint8Eq(actual uint8, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *uint8))
-	assertEq[uint8](
+	assertEq(
 		actual,
 		any(expected).(uint8),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -177,13 +160,12 @@ func (expectation *Expectation[A]) uint8Eq(actual uint8, expected A) {
 func (expectation *Expectation[A]) uint16Eq(actual uint16, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *uint16))
-	assertEq[uint16](
+	assertEq(
 		actual,
 		any(expected).(uint16),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -191,13 +173,12 @@ func (expectation *Expectation[A]) uint16Eq(actual uint16, expected A) {
 func (expectation *Expectation[A]) uint32Eq(actual uint32, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *uint32))
-	assertEq[uint32](
+	assertEq(
 		actual,
 		any(expected).(uint32),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -205,13 +186,12 @@ func (expectation *Expectation[A]) uint32Eq(actual uint32, expected A) {
 func (expectation *Expectation[A]) uint64Eq(actual uint64, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *uint64))
-	assertEq[uint64](
+	assertEq(
 		actual,
 		any(expected).(uint64),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -219,13 +199,12 @@ func (expectation *Expectation[A]) uint64Eq(actual uint64, expected A) {
 func (expectation *Expectation[A]) uintptrEq(actual uintptr, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *uintptr))
-	assertEq[uintptr](
+	assertEq(
 		actual,
 		any(expected).(uintptr),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -233,13 +212,12 @@ func (expectation *Expectation[A]) uintptrEq(actual uintptr, expected A) {
 func (expectation *Expectation[A]) float32Eq(actual float32, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *float32))
-	assertEq[float32](
+	assertEq(
 		actual,
 		any(expected).(float32),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -247,13 +225,12 @@ func (expectation *Expectation[A]) float32Eq(actual float32, expected A) {
 func (expectation *Expectation[A]) float64Eq(actual float64, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *float64))
-	assertEq[float64](
+	assertEq(
 		actual,
 		any(expected).(float64),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -261,13 +238,12 @@ func (expectation *Expectation[A]) float64Eq(actual float64, expected A) {
 func (expectation *Expectation[A]) boolEq(actual bool, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *bool))
-	assertEq[bool](
+	assertEq(
 		actual,
 		any(expected).(bool),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -275,13 +251,12 @@ func (expectation *Expectation[A]) boolEq(actual bool, expected A) {
 func (expectation *Expectation[A]) complex64Eq(actual complex64, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *complex64))
-	assertEq[complex64](
+	assertEq(
 		actual,
 		any(expected).(complex64),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -289,13 +264,12 @@ func (expectation *Expectation[A]) complex64Eq(actual complex64, expected A) {
 func (expectation *Expectation[A]) complex128Eq(actual complex128, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *complex128))
-	assertEq[complex128](
+	assertEq(
 		actual,
 		any(expected).(complex128),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -304,13 +278,12 @@ func (expectation *Expectation[A]) complex128Eq(actual complex128, expected A) {
 func (expectation *Expectation[A]) stringEq(actual string, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *string))
-	assertEq[string](
+	assertEq(
 		actual,
 		any(expected).(string),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -319,13 +292,12 @@ func (expectation *Expectation[A]) stringEq(actual string, expected A) {
 func (expectation *Expectation[A]) durationEq(actual time.Duration, expected A) {
 	expectation.test.testingT.Helper()
 
-	processFailure := any(expectation.processFailure).(func(string, int, string, *time.Duration))
-	assertEq[time.Duration](
+	assertEq(
 		actual,
 		any(expected).(time.Duration),
 		expectation.reverseExpectation,
 		expectation.FailMsg,
-		processFailure,
+		expectation.processFailure,
 		expectation.processPassed,
 		expectation.test.testingT.Helper,
 	)
@@ -337,7 +309,7 @@ func assertEq[T comparable](
 	expected T,
 	reverse bool,
 	failMsg func(string) string,
-	failFunc func(string, int, string, *T),
+	failFunc func(string, int, string, any),
 	passFunc func(),
 	Helper func(),
 ) {
