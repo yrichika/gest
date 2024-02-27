@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/yrichika/gest/pkg/gt"
 )
@@ -129,11 +130,13 @@ func assortOutput(lines []string, flags *FlagHolder) ([]string, []string, []stri
 		case excludeLineCondition(line):
 			// this vOrVV enables to output strings containing "FAIL", that users intentionally output with Println() etc.
 			if flags.vOrVV() || !isLineContainsFail {
-				anyOtherOutput = append(anyOtherOutput, line)
+				headingSpaceRemoved := strings.TrimLeftFunc(line, unicode.IsSpace)
+				anyOtherOutput = append(anyOtherOutput, headingSpaceRemoved)
 			}
 		default:
 			if flags.vOrVV() {
-				anyOtherOutput = append(anyOtherOutput, line)
+				headingSpaceRemoved := strings.TrimLeftFunc(line, unicode.IsSpace)
+				anyOtherOutput = append(anyOtherOutput, headingSpaceRemoved)
 			}
 		}
 	}
