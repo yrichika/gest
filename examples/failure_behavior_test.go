@@ -60,6 +60,34 @@ func TestFailureBehaviors(testingT *testing.T) {
 			// Output: Failed at [failing_test.go]:line 65: Pointer to [examples.Person{Name:"hoge", Age:1}] IS the same
 		})
 
+		t.It("fails ToBe with string", func() {
+			str1 := "hoge"
+			str2 := "hog"
+			gt.Expect(t, &str1).ToBe(str2)
+			// Output:
+		})
+
+		t.It("fails ToBe with string", func() {
+			str1 := "hoge"
+			str2 := "hoge"
+			gt.Expect(t, &str1).Not().ToBe(str2)
+			// Output:
+		})
+
+		t.It("fails ToBe with time.Duration", func() {
+			duration1 := 1 * time.Second
+			duration2 := 2 * time.Second
+			gt.Expect(t, &duration1).ToBe(duration2)
+			// Output: Failed at [failure_behavior_test.go]:line 66: actual:[1s] is NOT expected:[2s]
+		})
+
+		t.It("fails Not.ToBe with time.Duration", func() {
+			duration1 := 1 * time.Second
+			duration2 := 1 * time.Second
+			gt.Expect(t, &duration1).Not().ToBe(duration2)
+			// Output: Failed at [failure_behavior_test.go]:line 74: actual:[1s] IS expected:[1s]
+		})
+
 		t.It("fails with ToBe with time.Time", func() {
 			time1 := time.Now()
 			time2, _ := time.Parse("2006-01-02", "2021-01-01")
