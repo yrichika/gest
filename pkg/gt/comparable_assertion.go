@@ -34,7 +34,7 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 		string,
 		complex64,
 		complex128:
-		comparableEq(expectation, actual, expected)
+		expectation.comparableEq(actual, expected)
 	case time.Duration:
 		expectation.durationEq(actual, expected)
 	case time.Time:
@@ -48,7 +48,7 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 	}
 }
 
-func comparableEq[A any](expectation *Expectation[A], actual any, expected any) {
+func (expectation *Expectation[A]) comparableEq(actual any, expected any) {
 	expectation.test.testingT.Helper()
 
 	asserting(

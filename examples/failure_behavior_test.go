@@ -64,14 +64,14 @@ func TestFailureBehaviors(testingT *testing.T) {
 			str1 := "hoge"
 			str2 := "hog"
 			gt.Expect(t, &str1).ToBe(str2)
-			// Output:
+			// Output: Failed at [failure_behavior_test.go]:line 66: actual:["hoge"] is NOT expected:["hog"]
 		})
 
 		t.It("fails ToBe with string", func() {
 			str1 := "hoge"
 			str2 := "hoge"
 			gt.Expect(t, &str1).Not().ToBe(str2)
-			// Output:
+			// Output: Failed at [failure_behavior_test.go]:line 73: actual:["hoge"] IS expected:["hoge"]
 		})
 
 		t.It("fails ToBe with time.Duration", func() {
