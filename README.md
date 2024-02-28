@@ -402,6 +402,16 @@ gt.Expect(t, &intVal).ToBeType(gt.OfInt)
 
 ```
 
+#### `ToBeIn([]T)`
+
+ある要素がスライスに含まれているかをアサートします。
+
+```go
+intArr := []int{1, 2, 3, 4, 5}
+val := 3
+gt.Expect(t, &val).ToBeIn(intArr)
+```
+
 
 #### `Not()`
 
