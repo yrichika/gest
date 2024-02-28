@@ -92,7 +92,7 @@ func main() {
 		anyOtherOutput = append(anyOtherOutput, other...)
 		gestOutputPrinted = append(gestOutputPrinted, hasGestResult)
 	}
-	isTestRun := gt.InArray(true, gestOutputPrinted)
+	isTestRun := gt.IsInSlice(true, gestOutputPrinted)
 
 	finalOutput(
 		flags,
@@ -140,7 +140,7 @@ func assortOutput(lines []string, flags *FlagHolder) ([]string, []string, []stri
 			}
 		}
 	}
-	hasGestResult := gt.InArray(true, gestOutputPrinted)
+	hasGestResult := gt.IsInSlice(true, gestOutputPrinted)
 
 	return failedTestResultLines, passedTestResultLines, anyOtherOutput, hasGestResult
 }

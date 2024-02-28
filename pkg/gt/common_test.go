@@ -7,20 +7,20 @@ import (
 func TestGestCommon(testingT *testing.T) {
 	t := CreateTest(testingT)
 
-	t.Describe("InArray", func() {
+	t.Describe("IsInSlice", func() {
 		t.It("should return true if specified value exists in array", func() {
-			intResult := InArray(3, []int{1, 2, 3, 4, 5})
+			intResult := IsInSlice(3, []int{1, 2, 3, 4, 5})
 			Expect(t, &intResult).ToBe(true)
 
-			strResult := InArray("hoge", []string{"hoge", "fuga", "piyo"})
+			strResult := IsInSlice("hoge", []string{"hoge", "fuga", "piyo"})
 			Expect(t, &strResult).ToBe(true)
 		})
 
 		t.It("should return false if specified value does NOT exist in array", func() {
-			intResult := InArray(6, []int{1, 2, 3, 4, 5})
+			intResult := IsInSlice(6, []int{1, 2, 3, 4, 5})
 			Expect(t, &intResult).ToBe(false)
 
-			strResult := InArray("foo", []string{"hoge", "fuga", "piyo"})
+			strResult := IsInSlice("foo", []string{"hoge", "fuga", "piyo"})
 			Expect(t, &strResult).ToBe(false)
 		})
 	})
