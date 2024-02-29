@@ -99,7 +99,7 @@ func (p *PanicExpectation) markAsFailed() {
 func (p *PanicExpectation) failMessage(relPath string, line int, errorMsg string) string {
 	p.test.testingT.Helper()
 
-	return fmt.Sprintf("Panic: [%s]:line %d: %s", relPath, line, fmt.Sprintf(errorMsg))
+	return fmt.Sprintf("Panic: [%s]:line %d: %s", relPath, line, errorMsg)
 }
 
 func (p *PanicExpectation) resetNot() {

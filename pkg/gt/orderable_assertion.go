@@ -26,24 +26,13 @@ type orderable interface {
 func (expectation *Expectation[A]) ToBe_(comparator func(A, A) bool, expected A) {
 	expectation.test.testingT.Helper()
 
-	relPath, line := getTestInfo(1)
-
-	expectation.test.subtotal++
-	if expectation.reverseExpectation {
-		if !comparator(*expectation.actual, expected) {
-			expectation.processPassed()
-			return
-		}
-		failMsg := expectation.FailMsg("compared actual:[%#v] and expected:[%#v]")
-		expectedForFailMsg := any(expected).(A)
-		expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
-		return
-	}
-	if comparator(*expectation.actual, expected) {
-		expectation.processPassed()
-		return
-	}
-	failMsg := expectation.FailMsg("compared actual:[%#v] and expected:[%#v]")
-	expectedForFailMsg := any(expected).(A)
-	expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
+	asserting(
+		expectation,
+		*expectation.actual,
+		expected,
+		"compared actual:[%#v] and expected:[%#v]",
+		"compared actual:[%#v] and expected:[%#v]",
+		1,
+		comparator,
+	)
 }

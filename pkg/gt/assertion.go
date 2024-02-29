@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+	"time"
 )
 
 type Expectation[A any] struct {
@@ -65,25 +66,15 @@ func (expectation *Expectation[A]) Not() *Expectation[A] {
 func (expectation *Expectation[A]) ToBeNil() {
 	expectation.test.testingT.Helper()
 
-	relPath, line := getTestInfo(1)
-
-	expectation.test.subtotal++
-	if expectation.reverseExpectation {
-		if expectation.actual != nil {
-			expectation.processPassed()
-			return
-		}
-		failMsg := expectation.FailMsg("Value IS nil")
-		expectation.processFailure(relPath, line, failMsg, nil)
-		return
-	}
-
-	if expectation.actual == nil {
-		expectation.processPassed()
-		return
-	}
-	failMsg := expectation.FailMsg("[%#v] is NOT nil")
-	expectation.processFailure(relPath, line, failMsg, nil)
+	asserting(
+		expectation,
+		expectation.actual,
+		nil,
+		"[%#v] is NOT nil", // FIXME: 表示がおかしい。ダメなら元に戻す。多少重複があってもいい
+		"the value IS nil",
+		1,
+		equalityAssertion,
+	)
 }
 
 // Assertion for pointer values.
@@ -91,25 +82,15 @@ func (expectation *Expectation[A]) ToBeNil() {
 func (expectation *Expectation[A]) ToBeSamePointerAs(expected *A) {
 	expectation.test.testingT.Helper()
 
-	relPath, line := getTestInfo(1)
-
-	expectation.test.subtotal++
-	if expectation.reverseExpectation {
-		if expectation.actual != expected {
-			expectation.processPassed()
-			return
-		}
-		failMsg := expectation.FailMsg("Pointer to [%#v] IS the same")
-		expectation.processFailure(relPath, line, failMsg, nil)
-		return
-	}
-	if expectation.actual == expected {
-		expectation.processPassed()
-		return
-	}
-	failMsg := expectation.FailMsg("Pointer to [%#v] is NOT the same")
-	expectation.processFailure(relPath, line, failMsg, nil)
-
+	asserting(
+		expectation,
+		expectation.actual,
+		expected,
+		"Pointer to [%#v] is NOT the same. Expected: pointer to [%#v]",
+		"Pointer to [%#v] IS the same. Expected: pointer to [%#v]",
+		1,
+		equalityAssertion,
+	)
 }
 
 // 文字列が正規表現にマッチする場合はアサートがpassします。
@@ -117,28 +98,15 @@ func (expectation *Expectation[A]) ToMatchRegex(expected string) {
 	expectation.test.testingT.Helper()
 
 	actualString := fmt.Sprintf("%v", *expectation.actual)
-	matched, _ := regexp.MatchString(expected, actualString)
-
-	relPath, line := getTestInfo(1)
-
-	expectation.test.subtotal++
-	if expectation.reverseExpectation {
-		if !matched {
-			expectation.processPassed()
-			return
-		}
-		failMsg := expectation.FailMsg("actual:[%#v] DOES match with regex expected:[%#v]")
-		expectedForFailMsg := any(expected).(A)
-		expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
-		return
-	}
-	if matched {
-		expectation.processPassed()
-		return
-	}
-	failMsg := expectation.FailMsg("actual:[%#v] does NOT match with regex expected:[%#v]")
-	expectedForFailMsg := any(expected).(A)
-	expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
+	asserting(
+		expectation,
+		actualString,
+		expected,
+		"actual:[%#v] does NOT match with regex expected:[%#v]",
+		"actual:[%#v] DOES match with regex expected:[%#v]",
+		1,
+		regexAssertion,
+	)
 }
 
 // 文字列が含まれている場合はアサートがpassします。
@@ -146,48 +114,52 @@ func (expectation *Expectation[A]) ToContainString(expected string) {
 	expectation.test.testingT.Helper()
 
 	actualString := fmt.Sprintf("%v", *expectation.actual)
-	contained := strings.Contains(actualString, expected)
-
-	relPath, line := getTestInfo(1)
-
-	expectation.test.subtotal++
-	if expectation.reverseExpectation {
-		if !contained {
-			expectation.processPassed()
-			return
-		}
-		failMsg := expectation.FailMsg("actual:[%#v] DOES contain expected:[%#v]")
-		expectedForFailMsg := any(expected).(A)
-		expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
-		return
-	}
-	if contained {
-		expectation.processPassed()
-		return
-	}
-	failMsg := expectation.FailMsg("actual:[%#v] does NOT contain expected:[%#v]")
-	expectedForFailMsg := any(expected).(A)
-	expectation.processFailure(relPath, line, failMsg, &expectedForFailMsg)
+	asserting(
+		expectation,
+		actualString,
+		expected,
+		"actual:[%#v] does NOT contain expected:[%#v]",
+		"actual:[%#v] DOES contain expected:[%#v]",
+		1,
+		strings.Contains,
+	)
 }
-
-// TODO: array/sliceが同じかどうか
-
-// TODO: actualの配列の中にexpectedが含まれているかどうか
-// func (expectation Expectation[A]) ToContainElem(expected A) {
-// 	expectation.test.testingT.Helper()
-//
-// }
-
-// TODO: expectedに指定した配列の中に要素があるかどうか
-// func (expectation Expectation[A]) ToBeIn(expected []A) {
-// 	expectation.test.testingT.Helper()
-//
-// }
 
 // TODO: implement:
 // assert json value the same
 
 // ----------------------------------------------------
+
+func asserting[A any, T any](
+	expectation *Expectation[A],
+	convertedActual T,
+	convertedExpected T,
+	failMessage string,
+	reverseFailMessage string,
+	skip int,
+	assertion func(T, T) bool,
+) {
+	expectation.test.testingT.Helper()
+
+	relPath, line := getTestInfo(skip + 1)
+
+	expectation.test.subtotal++
+	if expectation.reverseExpectation {
+		if !assertion(convertedActual, convertedExpected) {
+			expectation.processPassed()
+			return
+		}
+		failMsg := expectation.FailMsg(reverseFailMessage)
+		expectation.processFailure(relPath, line, failMsg, convertedExpected)
+		return
+	}
+	if assertion(convertedActual, convertedExpected) {
+		expectation.processPassed()
+		return
+	}
+	failMsg := expectation.FailMsg(failMessage)
+	expectation.processFailure(relPath, line, failMsg, convertedExpected)
+}
 
 func (expectation *Expectation[A]) FailMsg(msg string) string {
 
@@ -195,6 +167,19 @@ func (expectation *Expectation[A]) FailMsg(msg string) string {
 		return expectation.failMsg
 	}
 	return msg
+}
+
+func regexAssertion(actual string, expected string) bool {
+	matched, _ := regexp.MatchString(expected, actual)
+	return matched
+}
+
+func equalityAssertion[T comparable](actual T, expected T) bool {
+	return actual == expected
+}
+
+func timeAssertion(actual time.Time, expected time.Time) bool {
+	return actual.Equal(any(expected).(time.Time))
 }
 
 func getTestInfo(skip int) (string, int) {
@@ -208,7 +193,7 @@ func (expectation Expectation[A]) processFailure(
 	relPath string,
 	line int,
 	errorMsg string,
-	expected *A,
+	expected any,
 ) {
 	expectation.test.testingT.Helper()
 
@@ -236,7 +221,7 @@ func (expectation *Expectation[A]) formatFailMessage(
 	relPath string,
 	line int,
 	errorMsg string,
-	expected *A,
+	expected any,
 ) string {
 	expectation.test.testingT.Helper()
 
@@ -244,7 +229,7 @@ func (expectation *Expectation[A]) formatFailMessage(
 		if expected != nil {
 			return fmt.Sprintf(
 				"Failed at [%s]:line %d: %s",
-				relPath, line, fmt.Sprintf(errorMsg, *expectation.actual, *expected),
+				relPath, line, fmt.Sprintf(errorMsg, *expectation.actual, expected),
 			)
 		}
 		return fmt.Sprintf(

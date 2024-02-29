@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/yrichika/gest/pkg/gt"
 )
@@ -91,7 +92,7 @@ func main() {
 		anyOtherOutput = append(anyOtherOutput, other...)
 		gestOutputPrinted = append(gestOutputPrinted, hasGestResult)
 	}
-	isTestRun := gt.InArray(true, gestOutputPrinted)
+	isTestRun := gt.IsInSlice(true, gestOutputPrinted)
 
 	finalOutput(
 		flags,
@@ -129,15 +130,17 @@ func assortOutput(lines []string, flags *FlagHolder) ([]string, []string, []stri
 		case excludeLineCondition(line):
 			// this vOrVV enables to output strings containing "FAIL", that users intentionally output with Println() etc.
 			if flags.vOrVV() || !isLineContainsFail {
-				anyOtherOutput = append(anyOtherOutput, line)
+				headingSpaceRemoved := strings.TrimLeftFunc(line, unicode.IsSpace)
+				anyOtherOutput = append(anyOtherOutput, headingSpaceRemoved)
 			}
 		default:
 			if flags.vOrVV() {
-				anyOtherOutput = append(anyOtherOutput, line)
+				headingSpaceRemoved := strings.TrimLeftFunc(line, unicode.IsSpace)
+				anyOtherOutput = append(anyOtherOutput, headingSpaceRemoved)
 			}
 		}
 	}
-	hasGestResult := gt.InArray(true, gestOutputPrinted)
+	hasGestResult := gt.IsInSlice(true, gestOutputPrinted)
 
 	return failedTestResultLines, passedTestResultLines, anyOtherOutput, hasGestResult
 }

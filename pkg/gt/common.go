@@ -50,9 +50,16 @@ func itFuncSkipMsg(description string) string {
 	return YellowMsg("    - skip: it \"" + description + "\"")
 }
 
-func InArray[T comparable](val T, array []T) bool {
+func IsInSlice[T comparable](val T, array []T) bool {
+	eq := func(a, b T) bool {
+		return a == b
+	}
+	return ContainsElement(val, array, eq)
+}
+
+func ContainsElement[T any](val T, array []T, predicate func(T, T) bool) bool {
 	for _, item := range array {
-		if item == val {
+		if predicate(val, item) {
 			return true
 		}
 	}
@@ -75,7 +82,7 @@ func GetAllTestFileDirectories(isRunInAllDirs bool) []string {
 		if !info.IsDir() && strings.HasSuffix(info.Name(), "_test.go") {
 			dirPath := filepath.Dir(path)
 			// exclude duplicate directory names
-			if !InArray(dirPath, directories) {
+			if !IsInSlice(dirPath, directories) {
 				directories = append(directories, dirPath)
 			}
 		}

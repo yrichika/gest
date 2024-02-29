@@ -379,7 +379,7 @@ gt.Expect(t, &time).ToBe_(gt.TimeBetween(past), future)
 #### `ToBeType(func (*T) bool)`
 
 値の型が、どの型であるかをアサートすることができます。
-引数に渡すコールバック関数は、型をアサーとするための関数です。
+引数に渡すコールバック関数は、型をアサートするための関数です。
 これらは、すでに用意されているので、そのまま使ってください
 
 - `OfBool`
@@ -400,6 +400,17 @@ gt.Expect(t, &boolVal).ToBeType(gt.OfBool)
 intVal := 1
 gt.Expect(t, &intVal).ToBeType(gt.OfInt)
 
+```
+
+#### `ToBeIn([]T)`
+
+ある要素がスライスに含まれているかをアサートします。
+プリミティブ型(`comparable`)と、`time.Duration`、`time.Time`と、`struct`型の値とスライスをアサートすることができます。
+
+```go
+intArr := []int{1, 2, 3, 4, 5}
+val := 3
+gt.Expect(t, &val).ToBeIn(intArr)
 ```
 
 
