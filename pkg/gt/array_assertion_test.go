@@ -9,7 +9,6 @@ func TestArrayAssertions(testingT *testing.T) {
 
 	t := CreateTest(testingT)
 	t.Describe("ToBeIn", func() {
-		// TEST: fail messageもいれること
 		t.It("should pass when value is in []int", func() {
 			intArr := []int{1, 2, 3, 4, 5}
 			val := 3
@@ -45,7 +44,6 @@ func TestArrayAssertions(testingT *testing.T) {
 			Expect(t, &val).Not().ToBeIn(strArr)
 		})
 
-		// TEST: fail messageもいれること
 		t.It("should pass when value is in []time.Duration", func() {
 			durationArr := []time.Duration{
 				1 * time.Second,
@@ -66,7 +64,6 @@ func TestArrayAssertions(testingT *testing.T) {
 			Expect(t, &val).Not().ToBeIn(durationArr)
 		})
 
-		// TEST: fail messageもいれること
 		t.It("should pass when value is in []time.Time", func() {
 			now := time.Now()
 			timeArr := []time.Time{
@@ -89,7 +86,6 @@ func TestArrayAssertions(testingT *testing.T) {
 			Expect(t, &val).Not().ToBeIn(timeArr)
 		})
 
-		// TEST: fail messageもいれること
 		t.It("should pass when value is in custom struct slice", func() {
 			personArr := []Person{
 				{Name: "foo", Age: 20},

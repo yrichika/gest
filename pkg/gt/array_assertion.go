@@ -42,6 +42,8 @@ func (expectation Expectation[A]) ToBeIn(expected []A) {
 }
 
 func (expectation *Expectation[A]) comparableIn(actual any, expected []A) {
+	expectation.test.testingT.Helper()
+
 	convertedExpected := make([]any, len(expected))
 	for i, v := range expected {
 		convertedExpected[i] = v
@@ -58,6 +60,8 @@ func (expectation *Expectation[A]) comparableIn(actual any, expected []A) {
 }
 
 func (expectation *Expectation[A]) durationIn(actual time.Duration, expected []A) {
+	expectation.test.testingT.Helper()
+
 	convertedExpected := make([]time.Duration, len(expected))
 	for i, v := range expected {
 		convertedExpected[i] = any(v).(time.Duration)
@@ -75,6 +79,8 @@ func (expectation *Expectation[A]) durationIn(actual time.Duration, expected []A
 }
 
 func (expectation *Expectation[A]) timeIn(actual time.Time, expected []A) {
+	expectation.test.testingT.Helper()
+
 	convertedExpected := make([]time.Time, len(expected))
 	for i, v := range expected {
 		convertedExpected[i] = any(v).(time.Time)
@@ -98,6 +104,8 @@ func isTimeInSlice(actual time.Time, expected []time.Time) bool {
 }
 
 func (expectation *Expectation[A]) deepIn(actual any, expected []A) {
+	expectation.test.testingT.Helper()
+
 	convertedExpected := make([]any, len(expected))
 	for i, v := range expected {
 		convertedExpected[i] = v
@@ -152,4 +160,4 @@ func assertingSlice[A any, T any](
 	expectation.processFailure(relPath, line, failMsg, convertedExpected)
 }
 
-// TODO: array/sliceが同じかどうか
+// TODO: array/slice/mapが同じかどうか

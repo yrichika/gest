@@ -405,6 +405,7 @@ gt.Expect(t, &intVal).ToBeType(gt.OfInt)
 #### `ToBeIn([]T)`
 
 ある要素がスライスに含まれているかをアサートします。
+プリミティブ型(`comparable`)と、`time.Duration`、`time.Time`と、`struct`型の値とスライスをアサートすることができます。
 
 ```go
 intArr := []int{1, 2, 3, 4, 5}
