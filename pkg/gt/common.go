@@ -50,15 +50,15 @@ func itFuncSkipMsg(description string) string {
 	return YellowMsg("    - skip: it \"" + description + "\"")
 }
 
-func IsInSlice[T comparable](val T, array []T) bool {
+func IsInSlice[T comparable](val T, slice []T) bool {
 	eq := func(a, b T) bool {
 		return a == b
 	}
-	return ContainsElement(val, array, eq)
+	return ContainsElement(val, slice, eq)
 }
 
-func ContainsElement[T any](val T, array []T, predicate func(T, T) bool) bool {
-	for _, item := range array {
+func ContainsElement[T any](val T, slice []T, predicate func(T, T) bool) bool {
+	for _, item := range slice {
 		if predicate(val, item) {
 			return true
 		}

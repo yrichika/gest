@@ -8,7 +8,7 @@ func TestGestCommon(testingT *testing.T) {
 	t := CreateTest(testingT)
 
 	t.Describe("IsInSlice", func() {
-		t.It("should return true if specified value exists in array", func() {
+		t.It("should return true if specified value exists in slice", func() {
 			intResult := IsInSlice(3, []int{1, 2, 3, 4, 5})
 			Expect(t, &intResult).ToBe(true)
 
@@ -16,7 +16,7 @@ func TestGestCommon(testingT *testing.T) {
 			Expect(t, &strResult).ToBe(true)
 		})
 
-		t.It("should return false if specified value does NOT exist in array", func() {
+		t.It("should return false if specified value does NOT exist in slice", func() {
 			intResult := IsInSlice(6, []int{1, 2, 3, 4, 5})
 			Expect(t, &intResult).ToBe(false)
 

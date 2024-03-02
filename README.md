@@ -408,9 +408,9 @@ gt.Expect(t, &intVal).ToBeType(gt.OfInt)
 プリミティブ型(`comparable`)と、`time.Duration`、`time.Time`と、`struct`型の値とスライスをアサートすることができます。
 
 ```go
-intArr := []int{1, 2, 3, 4, 5}
+intSlice := []int{1, 2, 3, 4, 5}
 val := 3
-gt.Expect(t, &val).ToBeIn(intArr)
+gt.Expect(t, &val).ToBeIn(intSlice)
 ```
 
 
