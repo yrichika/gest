@@ -74,8 +74,8 @@ func GetAllTestFileDirectories(isRunInAllDirs bool) []string {
 			return err
 		}
 
-		// skip hidden directories
-		if info.IsDir() && ignoreUsually(path, isRunInAllDirs) {
+		// skip unnecessary directories
+		if info.IsDir() && ignoreUsually(path, info, isRunInAllDirs) {
 			return filepath.SkipDir
 		}
 
@@ -97,18 +97,23 @@ func GetAllTestFileDirectories(isRunInAllDirs bool) []string {
 }
 
 // Add directory names to ignore only when `-all` flag is NOT specified
-func ignoreUsually(dirName string, runInAllDirs bool) bool {
-	if runInAllDirs {
-		return alwaysIgnore(dirName)
+func ignoreUsually(path string, info os.FileInfo, runInAllDirs bool) bool {
+	// do not ignore the project root directory
+	if path == "." {
+		return false
 	}
 
-	return alwaysIgnore(dirName) ||
+	if runInAllDirs {
+		return alwaysIgnore(info)
+	}
+
+	return alwaysIgnore(info) ||
 		// Add directory names to ignore if required
-		dirName == "examples"
+		path == "examples"
 }
 
 // Add directory names to always ignore
-func alwaysIgnore(dirName string) bool {
-	// TODO: .git以外でも`.`で始まる隠しディレクトリはスキップする
-	return strings.HasPrefix(dirName, ".git")
+// hidden directories are always ignored
+func alwaysIgnore(info os.FileInfo) bool {
+	return strings.HasPrefix(info.Name(), ".")
 }
