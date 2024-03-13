@@ -203,111 +203,111 @@ func TestFailureBehaviors(testingT *testing.T) {
 	t5 := gt.CreateTest(testingT)
 	t5.Describe("Tests for failure behaviors with ToBeIn", func() {
 		t5.It("fails when value is in []int", func() {
-			intArr := []int{1, 2, 3, 4, 5}
+			intSlice := []int{1, 2, 3, 4, 5}
 			val := 6
-			gt.Expect(t5, &val).ToBeIn(intArr)
+			gt.Expect(t5, &val).ToBeIn(intSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 208: actual:[6] is NOT in expected:[[1 2 3 4 5]]
 		})
 		t5.It("fails when value is NOT in []int", func() {
-			intArr := []int{1, 2, 3, 4, 5}
+			intSlice := []int{1, 2, 3, 4, 5}
 			val := 3
-			gt.Expect(t5, &val).Not().ToBeIn(intArr)
+			gt.Expect(t5, &val).Not().ToBeIn(intSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 213: actual:[3] IS in expected:[[1 2 3 4 5]]
 		})
 
 		t5.It("fails when value is in []bool", func() {
-			boolArr := []bool{false, false, false}
+			boolSlice := []bool{false, false, false}
 			val := true
-			gt.Expect(t5, &val).ToBeIn(boolArr)
+			gt.Expect(t5, &val).ToBeIn(boolSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 219: actual:[true] is NOT in expected:[[false false false]]
 		})
 
 		t5.It("fails when value is NOT in []bool", func() {
-			boolArr := []bool{false, false, false}
+			boolSlice := []bool{false, false, false}
 			val := false
-			gt.Expect(t5, &val).Not().ToBeIn(boolArr)
+			gt.Expect(t5, &val).Not().ToBeIn(boolSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 225: actual:[false] IS in expected:[[false false false]]
 		})
 
 		t5.It("fails when value is in []string", func() {
-			strArr := []string{"foo", "bar", "baz"}
+			strSlice := []string{"foo", "bar", "baz"}
 			val := "ban"
-			gt.Expect(t5, &val).ToBeIn(strArr)
+			gt.Expect(t5, &val).ToBeIn(strSlice)
 			// Failed at [failure_behavior_test.go]:line 231: actual:["ban"] is NOT in expected:[[foo bar baz]]
 		})
 
 		t5.It("fails when value is NOT in []string", func() {
-			strArr := []string{"foo", "bar", "baz"}
+			strSlice := []string{"foo", "bar", "baz"}
 			val := "foo"
-			gt.Expect(t5, &val).Not().ToBeIn(strArr)
+			gt.Expect(t5, &val).Not().ToBeIn(strSlice)
 			// Failed at [failure_behavior_test.go]:line 237: actual:["foo"] IS in expected:[[foo bar baz]]
 		})
 
 		t5.It("fails when value is in []time.Duration", func() {
-			durationArr := []time.Duration{
+			durationSlice := []time.Duration{
 				1 * time.Second,
 				2 * time.Second,
 				3 * time.Second,
 			}
 			val := 4 * time.Second
-			gt.Expect(t5, &val).ToBeIn(durationArr)
+			gt.Expect(t5, &val).ToBeIn(durationSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 247: actual:[4s] is NOT in expected:[[1s 2s 3s]]
 		})
 
 		t5.It("fails when value is NOT in []time.Duration", func() {
-			durationArr := []time.Duration{
+			durationSlice := []time.Duration{
 				1 * time.Second,
 				2 * time.Second,
 				3 * time.Second,
 			}
 			val := 1 * time.Second
-			gt.Expect(t5, &val).Not().ToBeIn(durationArr)
+			gt.Expect(t5, &val).Not().ToBeIn(durationSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 257: actual:[1s] IS in expected:[[1s 2s 3s]]
 		})
 
 		t5.It("fails when value is in []time.Time", func() {
 			now := time.Now()
-			timeArr := []time.Time{
+			timeSlice := []time.Time{
 				now,
 				now.Add(1 * time.Hour),
 				now.Add(2 * time.Hour),
 			}
 			val := now.Add(3 * time.Hour)
-			gt.Expect(t5, &val).ToBeIn(timeArr)
+			gt.Expect(t5, &val).ToBeIn(timeSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 268: actual:[time.Date(2024, time.February, 29, 19, 50, 3, 115801000, time.Local)] is NOT in expected:[[]time.Time{time.Date(2024, time.February, 29, 16, 50, 3, 115801000, time.Local), time.Date(2024, time.February, 29, 17, 50, 3, 115801000, time.Local), time.Date(2024, time.February, 29, 18, 50, 3, 115801000, time.Local)}]
 		})
 
 		t5.It("fails when value is NOT in []time.Time", func() {
 			now := time.Now()
-			timeArr := []time.Time{
+			timeSlice := []time.Time{
 				now,
 				now.Add(1 * time.Hour),
 				now.Add(2 * time.Hour),
 			}
 			val := now.Add(2 * time.Hour)
-			gt.Expect(t5, &val).Not().ToBeIn(timeArr)
+			gt.Expect(t5, &val).Not().ToBeIn(timeSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 279: actual:[time.Date(2024, time.February, 29, 18, 50, 3, 115856000, time.Local)] IS in expected:[[]time.Time{time.Date(2024, time.February, 29, 16, 50, 3, 115856000, time.Local), time.Date(2024, time.February, 29, 17, 50, 3, 115856000, time.Local), time.Date(2024, time.February, 29, 18, 50, 3, 115856000, time.Local)}]
 		})
 
 		t5.It("fails when value is in custom struct slice", func() {
-			personArr := []Person{
+			personSlice := []Person{
 				{Name: "foo", Age: 20},
 				{Name: "bar", Age: 30},
 				{Name: "baz", Age: 40},
 			}
 			val := Person{Name: "ban", Age: 50}
-			gt.Expect(t5, &val).ToBeIn(personArr)
+			gt.Expect(t5, &val).ToBeIn(personSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 289: actual:[examples.Person{Name:"ban", Age:50}] is NOT in expected:[[]interface {}{examples.Person{Name:"foo", Age:20}, examples.Person{Name:"bar", Age:30}, examples.Person{Name:"baz", Age:40}}]
 		})
 
 		t5.It("fails when value is NOT in custom struct slice", func() {
-			personArr := []Person{
+			personSlice := []Person{
 				{Name: "foo", Age: 20},
 				{Name: "bar", Age: 30},
 				{Name: "baz", Age: 40},
 			}
 			val := Person{Name: "foo", Age: 20}
-			gt.Expect(t5, &val).Not().ToBeIn(personArr)
+			gt.Expect(t5, &val).Not().ToBeIn(personSlice)
 			// Output: Failed at [failure_behavior_test.go]:line 299: actual:[examples.Person{Name:"foo", Age:20}] IS in expected:[[]interface {}{examples.Person{Name:"foo", Age:20}, examples.Person{Name:"bar", Age:30}, examples.Person{Name:"baz", Age:40}}]
 		})
 	})
