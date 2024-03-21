@@ -20,13 +20,13 @@ type Test struct {
 	// check if a running test is failed
 	isThisTestFailed bool
 	// check if any test in the suite is failed
-	isAnyTestFailed bool
-	isAsyncEnabled  bool
-	isSkipping      bool
-	beforeEach      func()
-	afterEach       func()
-	beforeAll       func()
-	afterAll        func()
+	isAnyTestFailed   bool
+	isParallelEnabled bool
+	isSkipping        bool
+	beforeEach        func()
+	afterEach         func()
+	beforeAll         func()
+	afterAll          func()
 }
 
 // Gestのテストの実行環境を作成します。
@@ -35,19 +35,19 @@ func CreateTest(t *testing.T) *Test {
 	isGestOn := len(os.Getenv(EnvName)) > 0
 	testFileName := getTestName(t)
 	return &Test{
-		testingT:         t,
-		testName:         testFileName,
-		passed:           0,
-		subtotal:         0,
-		isGestOn:         isGestOn,
-		isThisTestFailed: false,
-		isAnyTestFailed:  false,
-		isAsyncEnabled:   false,
-		isSkipping:       false,
-		beforeEach:       func() {},
-		afterEach:        func() {},
-		beforeAll:        func() {},
-		afterAll:         func() {},
+		testingT:          t,
+		testName:          testFileName,
+		passed:            0,
+		subtotal:          0,
+		isGestOn:          isGestOn,
+		isThisTestFailed:  false,
+		isAnyTestFailed:   false,
+		isParallelEnabled: false,
+		isSkipping:        false,
+		beforeEach:        func() {},
+		afterEach:         func() {},
+		beforeAll:         func() {},
+		afterAll:          func() {},
 	}
 }
 
@@ -161,12 +161,12 @@ func (t *Test) It(description string, body func()) {
 	start := time.Now()
 	t.beforeEach()
 	t.testingT.Run(description, func(testingT *testing.T) {
-		if t.isAsyncEnabled {
+		if t.isParallelEnabled {
 			t.testingT.Parallel()
 		}
 		body()
 	})
-	t.disableAsync()
+	t.disableParallel()
 	t.afterEach()
 	elapsed := time.Since(start)
 
@@ -190,8 +190,8 @@ func (t *Test) Test(description string, body func()) {
 
 // テストを非同期で実行します。
 // 内部的には、`testing.T.Parallel()`を呼び出しています。
-func (t *Test) Async() *Test {
-	t.isAsyncEnabled = true
+func (t *Test) Parallel() *Test {
+	t.isParallelEnabled = true
 	return t
 }
 
@@ -207,8 +207,8 @@ func (t *Test) Todo(description string) {
 	t.messages = append(t.messages, YellowMsg("    - todo: \""+description+"\""))
 }
 
-func (t *Test) disableAsync() {
-	t.isAsyncEnabled = false
+func (t *Test) disableParallel() {
+	t.isParallelEnabled = false
 }
 
 func (t *Test) disableSkipping() {
@@ -245,6 +245,11 @@ func (t *Test) Setenv(key, value string) {
 // Goの標準テストの`Test`関数の中で呼び出してください。
 func (t *Test) SkipAll() {
 	t.testingT.Skip()
+}
+
+// Alias of testing.T.Parallel()
+func (t *Test) Prl() {
+	t.testingT.Parallel()
 }
 
 // TODO: Add other convenient aliases
