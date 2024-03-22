@@ -162,6 +162,7 @@ func (t *Test) It(description string, body func()) {
 	t.beforeEach()
 	t.testingT.Run(description, func(testingT *testing.T) {
 		if t.isAsyncEnabled {
+			// TODO: この使い方が正しいのか、確認。Parallel()はトップレベルで呼ぶもの?
 			t.testingT.Parallel()
 		}
 		body()

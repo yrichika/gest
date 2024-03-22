@@ -289,7 +289,7 @@ gest -all-dirs -run TestInExamplesDir
 
 #### `ToBe(T)`
 
-これで、`int`系、`bool`, `string`, `complex64`, etc、プリミティブ型と`time.Time`、`time.Duration`、`struct`型はすべてアサートすることができます。
+これで、`int`系、`bool`, `string`, `complex64`, etc、プリミティブ型と`time.Time`、`time.Duration`、`struct`型、スライス、配列、`map`はすべてアサートすることができます。
 
 構造体が同じかどうかの確認は、内部の処理では、`reflect.DeepEqual()`を使って、2つの値の比較を行っています。
 
