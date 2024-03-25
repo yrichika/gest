@@ -128,14 +128,14 @@ func (t *Test) Describe(description string, body func()) {
 }
 
 func (t *Test) describeFuncFailMsg(description string, elapsed time.Duration) string {
-	timeInSeconds := fmt.Sprintf("%.3f", elapsed.Seconds())
+	timeInSeconds := fmt.Sprintf("%.4f", elapsed.Seconds())
 	line1 := RedMsg(fmt.Sprintf("%s (Asserted: %d/%d)", t.testName, t.passed, t.subtotal))
 	line2 := RedMsg(fmt.Sprintf(" ✘ FAIL: describe \"%s\"  (%ss)", description, timeInSeconds))
 	return line1 + "\n" + line2
 }
 
 func (t *Test) describeFuncPassMsg(description string, elapsed time.Duration) string {
-	timeInSeconds := fmt.Sprintf("%.3f", elapsed.Seconds())
+	timeInSeconds := fmt.Sprintf("%.4f", elapsed.Seconds())
 	line1 := GreenMsg(fmt.Sprintf("%s (Asserted: %d/%d)", t.testName, t.passed, t.subtotal))
 	line2 := GreenMsg(fmt.Sprintf(" ✔ PASS: describe \"%s\"  (%ss)", description, timeInSeconds))
 	return line1 + "\n" + line2
