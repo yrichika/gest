@@ -32,8 +32,8 @@ func TestSuiteGest(testingT *testing.T) {
       gt.Expect(v, &r).ToBe(2)
     })
 
-    // 非同期テスト
-    t.Async().It("should execute test asynchronously", func() {
+    // 並行テスト
+    t.Parallel().It("should execute test parallelly", func() {
       time.Sleep(3 * time.Second)
     })
 

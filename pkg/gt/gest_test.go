@@ -36,7 +36,7 @@ func TestSuiteGestRunner(testingT *testing.T) {
 			Expect(t, &mockTrue).ToBe(true)
 		})
 
-		t.Async().It("should be async", func() {
+		t.Parallel().It("should be Parallel", func() {
 			// actually not sure how to Parallel functionality,
 			// but it should be working
 			time.Sleep(300 * time.Millisecond)
