@@ -5,8 +5,6 @@ package gt
 func (expectation *Expectation[A]) ToBeType(typeComparator func(*A) bool) {
 	expectation.test.testingT.Helper()
 
-	relPath, line := getTestInfo(1)
-
 	expectation.test.subtotal++
 	if expectation.reverseExpectation {
 		if !typeComparator(expectation.actual) {
@@ -14,7 +12,7 @@ func (expectation *Expectation[A]) ToBeType(typeComparator func(*A) bool) {
 			return
 		}
 		failMsg := expectation.FailMsg("actual:[%T] IS expected type")
-		expectation.processFailure(relPath, line, failMsg, nil)
+		expectation.processFailure(failMsg, expectation.actual, nil)
 		return
 	}
 	if typeComparator(expectation.actual) {
@@ -22,5 +20,5 @@ func (expectation *Expectation[A]) ToBeType(typeComparator func(*A) bool) {
 		return
 	}
 	failMsg := expectation.FailMsg("actual:[%T] is NOT expected type")
-	expectation.processFailure(relPath, line, failMsg, nil)
+	expectation.processFailure(failMsg, expectation.actual, nil)
 }

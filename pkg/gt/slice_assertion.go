@@ -35,9 +35,8 @@ func (expectation Expectation[A]) ToBeIn(expected []A) {
 	case any:
 		expectation.deepIn(actual, expected)
 	default:
-		relPath, line := getTestInfo(1)
 		msg := expectation.FailMsg("!!ASSERTION ERROR!!: Type [%T] is not supported with `ToBeIn` method.")
-		expectation.processFailure(relPath, line, msg, nil)
+		expectation.processFailure(msg, actual, nil)
 	}
 }
 
@@ -54,7 +53,6 @@ func (expectation *Expectation[A]) comparableIn(actual any, expected []A) {
 		convertedExpected,
 		"actual:[%#v] is NOT in expected:[%v]",
 		"actual:[%#v] IS in expected:[%v]",
-		2,
 		IsInSlice,
 	)
 }
@@ -73,7 +71,6 @@ func (expectation *Expectation[A]) durationIn(actual time.Duration, expected []A
 		convertedExpected,
 		"actual:[%v] is NOT in expected:[%v]",
 		"actual:[%v] IS in expected:[%v]",
-		2,
 		IsInSlice,
 	)
 }
@@ -91,7 +88,6 @@ func (expectation *Expectation[A]) timeIn(actual time.Time, expected []A) {
 		convertedExpected,
 		"actual:[%#v] is NOT in expected:[%#v]",
 		"actual:[%#v] IS in expected:[%#v]",
-		2,
 		isTimeInSlice,
 	)
 }
@@ -116,7 +112,6 @@ func (expectation *Expectation[A]) deepIn(actual any, expected []A) {
 		convertedExpected,
 		"actual:[%#v] is NOT in expected:[%#v]",
 		"actual:[%#v] IS in expected:[%#v]",
-		2,
 		isStructInSlice,
 	)
 }
@@ -135,12 +130,9 @@ func assertingSlice[A any, T any](
 	convertedExpected []T,
 	failMessage string,
 	reverseFailMessage string,
-	skip int,
 	assertion func(T, []T) bool,
 ) {
 	expectation.test.testingT.Helper()
-
-	relPath, line := getTestInfo(skip + 1)
 
 	expectation.test.subtotal++
 	if expectation.reverseExpectation {
@@ -149,7 +141,7 @@ func assertingSlice[A any, T any](
 			return
 		}
 		failMsg := expectation.FailMsg(reverseFailMessage)
-		expectation.processFailure(relPath, line, failMsg, convertedExpected)
+		expectation.processFailure(failMsg, convertedActual, convertedExpected)
 		return
 	}
 	if assertion(convertedActual, convertedExpected) {
@@ -157,7 +149,7 @@ func assertingSlice[A any, T any](
 		return
 	}
 	failMsg := expectation.FailMsg(failMessage)
-	expectation.processFailure(relPath, line, failMsg, convertedExpected)
+	expectation.processFailure(failMsg, convertedActual, convertedExpected)
 }
 
 // TODO: array/slice/mapが同じかどうか

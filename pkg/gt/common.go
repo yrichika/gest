@@ -29,19 +29,13 @@ func RedMsg(msg string) string {
 	return Red + msg + Reset
 }
 
-func extractRelPath(file string) string {
-	cwd, _ := os.Getwd()
-	relPath, _ := filepath.Rel(cwd, file)
-	return relPath
-}
-
 func itFuncFailMsg(description string, elapsed time.Duration) string {
-	timeInSeconds := fmt.Sprintf("%.3f", elapsed.Seconds())
+	timeInSeconds := fmt.Sprintf("%.4f", elapsed.Seconds())
 	return RedMsg("    - fail: it \"" + description + "\"  (" + timeInSeconds + "s)")
 }
 
 func itFuncPassMsg(description string, elapsed time.Duration) string {
-	timeInSeconds := fmt.Sprintf("%.3f", elapsed.Seconds())
+	timeInSeconds := fmt.Sprintf("%.4f", elapsed.Seconds())
 	// TODO: 'it' should be switchable to 'test'
 	return GreenMsg("    - pass: it \"" + description + "\"  (" + timeInSeconds + "s)")
 }

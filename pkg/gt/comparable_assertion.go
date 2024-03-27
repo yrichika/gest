@@ -42,9 +42,8 @@ func (expectation *Expectation[A]) ToBe(expected A) {
 	case any:
 		expectation.deepEq(&actual, &expected)
 	default:
-		relPath, line := getTestInfo(1)
 		msg := expectation.FailMsg("!!ASSERTION ERROR!!: Type [%T] is not supported with `ToBe` method.")
-		expectation.processFailure(relPath, line, msg, nil)
+		expectation.processFailure(msg, actual, nil)
 	}
 }
 
@@ -57,7 +56,6 @@ func (expectation *Expectation[A]) comparableEq(actual any, expected any) {
 		expected,
 		equalityFailedMsg,
 		equalityReverseFailedMsg,
-		2,
 		equalityAssertion,
 	)
 }
@@ -71,7 +69,6 @@ func (expectation *Expectation[A]) durationEq(actual time.Duration, expected A) 
 		any(expected).(time.Duration),
 		"actual:[%v] is NOT expected:[%v]",
 		"actual:[%v] IS expected:[%v]",
-		2,
 		equalityAssertion,
 	)
 }
@@ -85,7 +82,6 @@ func (expectation *Expectation[A]) timeEq(actual time.Time, expected A) {
 		any(expected).(time.Time),
 		equalityFailedMsg,
 		equalityReverseFailedMsg,
-		2,
 		timeAssertion,
 	)
 }
@@ -100,7 +96,6 @@ func (expectation *Expectation[A]) deepEq(actual *any, expected *A) {
 		converted,
 		equalityFailedMsg,
 		equalityReverseFailedMsg,
-		2,
 		reflect.DeepEqual,
 	)
 }

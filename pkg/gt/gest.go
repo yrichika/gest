@@ -128,14 +128,14 @@ func (t *Test) Describe(description string, body func()) {
 }
 
 func (t *Test) describeFuncFailMsg(description string, elapsed time.Duration) string {
-	timeInSeconds := fmt.Sprintf("%.3f", elapsed.Seconds())
+	timeInSeconds := fmt.Sprintf("%.4f", elapsed.Seconds())
 	line1 := RedMsg(fmt.Sprintf("%s (Asserted: %d/%d)", t.testName, t.passed, t.subtotal))
 	line2 := RedMsg(fmt.Sprintf(" ✘ FAIL: describe \"%s\"  (%ss)", description, timeInSeconds))
 	return line1 + "\n" + line2
 }
 
 func (t *Test) describeFuncPassMsg(description string, elapsed time.Duration) string {
-	timeInSeconds := fmt.Sprintf("%.3f", elapsed.Seconds())
+	timeInSeconds := fmt.Sprintf("%.4f", elapsed.Seconds())
 	line1 := GreenMsg(fmt.Sprintf("%s (Asserted: %d/%d)", t.testName, t.passed, t.subtotal))
 	line2 := GreenMsg(fmt.Sprintf(" ✔ PASS: describe \"%s\"  (%ss)", description, timeInSeconds))
 	return line1 + "\n" + line2
@@ -161,7 +161,12 @@ func (t *Test) It(description string, body func()) {
 	start := time.Now()
 	t.beforeEach()
 	t.testingT.Run(description, func(testingT *testing.T) {
+<<<<<<< HEAD
+		if t.isAsyncEnabled {
+			// TODO: この使い方が正しいのか、確認。Parallel()はトップレベルで呼ぶもの?
+=======
 		if t.isParallelEnabled {
+>>>>>>> main
 			t.testingT.Parallel()
 		}
 		body()
@@ -245,6 +250,26 @@ func (t *Test) Setenv(key, value string) {
 // Goの標準テストの`Test`関数の中で呼び出してください。
 func (t *Test) SkipAll() {
 	t.testingT.Skip()
+}
+
+// Alias of testing.T.Errorf()
+func (t *Test) Errorf(format string, args ...any) {
+	t.testingT.Errorf(format, args...)
+}
+
+// Alias of testing.T.Error()
+func (t *Test) Error(args ...interface{}) {
+	t.testingT.Error(args...)
+}
+
+// Alias of testing.T.Fatalf()
+func (t *Test) Fatalf(format string, args ...any) {
+	t.testingT.Fatalf(format, args...)
+}
+
+// Alias of testing.T.Fatal()
+func (t *Test) Fatal(args ...interface{}) {
+	t.testingT.Fatal(args...)
 }
 
 // Alias of testing.T.Parallel()
