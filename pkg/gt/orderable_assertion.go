@@ -23,16 +23,14 @@ type orderable interface {
 
 // GreaterThan, LessThanなどを使い、値の比較のアサーションを行います。
 // e.g. `Expect(t, &val).ToBe_(GreaterThan, 1)`
-func (expectation *Expectation[A]) ToBe_(comparator func(A, A) bool, expected A) {
+func (expectation *Expectation[A]) ToBe_(comparator func(A) bool) {
 	expectation.test.testingT.Helper()
 
-	asserting(
+	assertingComparable(
 		expectation,
 		*expectation.actual,
-		expected,
-		"compared actual:[%#v] and expected:[%#v]",
-		"compared actual:[%#v] and expected:[%#v]",
-		1,
+		"compared values: actual:[%#v]",
+		"compared values: actual:[%#v]",
 		comparator,
 	)
 }

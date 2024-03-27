@@ -1,6 +1,7 @@
 package gt
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -21,6 +22,16 @@ func TestExpectAssertions(testingT *testing.T) {
 		t.It("should pass when value is NOT nil", func() {
 			notNilValue := 1
 			Expect(t, &notNilValue).Not().ToBeNil()
+		})
+
+		t.It("should pass when error is nil", func() {
+			var err error
+			Expect(t, &err).Not().ToContainError()
+		})
+
+		t.It("should pass when error is NOT nil", func() {
+			var err error = errors.New("error message")
+			Expect(t, &err).ToContainError()
 		})
 	})
 

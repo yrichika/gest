@@ -3,10 +3,6 @@
 // That's why it has its own struct type and file.
 package gt
 
-import (
-	"fmt"
-)
-
 type PanicExpectation struct {
 	test               *Test
 	reverseExpectation bool
@@ -29,8 +25,6 @@ func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 	p.test.testingT.Helper()
 	p.test.subtotal++
 
-	relPath, line := getTestInfo(1)
-
 	defer func() {
 		p.test.testingT.Helper() // DON'T FORGET THIS
 
@@ -41,7 +35,7 @@ func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 				return
 			}
 			msg := p.FailMsg("Panic DID happen")
-			p.processFailure(relPath, line, msg)
+			p.processFailure(msg)
 			return
 		}
 		if err != nil {
@@ -49,7 +43,7 @@ func (p *PanicExpectation) ToHappen(panickyFunc func()) {
 			return
 		}
 		msg := p.FailMsg("Panic did NOT happen")
-		p.processFailure(relPath, line, msg)
+		p.processFailure(msg)
 	}()
 
 	panickyFunc()
@@ -73,10 +67,10 @@ func (p *PanicExpectation) FailMsg(msg string) string {
 	return msg
 }
 
-func (p *PanicExpectation) processFailure(relPath string, line int, errorMsg string) {
+func (p *PanicExpectation) processFailure(errorMsg string) {
 	p.test.testingT.Helper()
 
-	msg := p.failMessage(relPath, line, errorMsg)
+	msg := p.failMessage(errorMsg)
 	p.test.testingT.Errorf(RedMsg(msg))
 	p.markAsFailed()
 	p.resetNot()
@@ -96,10 +90,10 @@ func (p *PanicExpectation) markAsFailed() {
 	p.test.isAnyTestFailed = true
 }
 
-func (p *PanicExpectation) failMessage(relPath string, line int, errorMsg string) string {
+func (p *PanicExpectation) failMessage(errorMsg string) string {
 	p.test.testingT.Helper()
 
-	return fmt.Sprintf("Panic: [%s]:line %d: %s", relPath, line, errorMsg)
+	return errorMsg
 }
 
 func (p *PanicExpectation) resetNot() {

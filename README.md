@@ -323,6 +323,22 @@ var nilValue *int = nil
 gt.Expect(t, nilValue).ToBeNil()
 ```
 
+#### `ToContainError()`
+
+`error`型が`nil`かどうかを確認する場合は、`ToBeNil()`ではなく、`ToContainError()`を使ってください。
+`error`型はインターフェースのため、`ToBeNil()`では正しくアサートすることができません。
+
+`error`が`nil`かどうかを確認する場合は、`Not().ToContainError()`と使ってください。
+
+```go
+var err error
+// errがnilの場合
+gt.Expect(t, &err).Not().ToContainError()
+// errに何か値がある場合
+gt.Expect(t, &err).ToContainError()
+```
+
+
 #### `ToMatchRegex(string)`
 
 文字列が正規表現と一致するかアサートします。
@@ -341,7 +357,7 @@ str := "hello, world"
 gt.Expect(t, &str).ToContainString("world")
 ```
 
-#### `ToBe_(func(T, T) bool, T)`
+#### `ToBe_(func(T) bool)`
 
 `ToBe`に`_`が付いた`ToBe_`は第一引数に、比較する関数を取り、actualの値とexpectedの値を比較します。
 「～以上」や、「～以下」のように、2つの値を比較したい場合に使います。
@@ -351,26 +367,26 @@ gt.Expect(t, &str).ToContainString("world")
 
 ```go
 val := 10
-gt.Expect(t, &val).ToBe_(gt.GreaterThan, 1)
-gt.Expect(t, &val).ToBe_(gt.GreaterThanOrEq, 10)
-gt.Expect(t, &val).ToBe_(gt.LessThan, 11)
-gt.Expect(t, &val).ToBe_(gt.LessThanOrEq, 10)
+gt.Expect(t, &val).ToBe_(gt.GreaterThan(1))
+gt.Expect(t, &val).ToBe_(gt.GreaterThanOrEq(10))
+gt.Expect(t, &val).ToBe_(gt.LessThan(11))
+gt.Expect(t, &val).ToBe_(gt.LessThanOrEq(10))
 // Betweenに指定した数値(min)と、expectedに指定した値(max)の間にある場合はpassします
-gt.Expect(t, &val).ToBe_(gt.Between(1), 10)
+gt.Expect(t, &val).ToBe_(gt.Between(1, 10))
 // time.Duration
 duration := 2 * time.Second
-gt.Expect(t, &duration).ToBe_(gt.GreaterThan, 1 * time.Second)
+gt.Expect(t, &duration).ToBe_(gt.GreaterThan(1 * time.Second))
 
 // 時間を比較する際は、After, Beforeを使います
 time := time.Now()
 past := time.Now().Add(-1 * time.Minute)
 future := time.Now().Add(1 * time.Minute)
-gt.Expect(t, &time).ToBe_(gt.After, past)
-gt.Expect(t, &time).ToBe_(gt.AfterOrEq, past)
-gt.Expect(t, &time).ToBe_(gt.Before, future)
-gt.Expect(t, &time).ToBe_(gt.BeforeOrEq, future)
+gt.Expect(t, &time).ToBe_(gt.After(past))
+gt.Expect(t, &time).ToBe_(gt.AfterOrEq(past))
+gt.Expect(t, &time).ToBe_(gt.Before(future))
+gt.Expect(t, &time).ToBe_(gt.BeforeOrEq(future))
 // TimeBetweenに指定した時間(from)と、expectedに指定した値(to)の間にある場合はpass
-gt.Expect(t, &time).ToBe_(gt.TimeBetween(past), future)
+gt.Expect(t, &time).ToBe_(gt.TimeBetween(past, future))
 
 
 ```

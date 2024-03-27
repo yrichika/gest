@@ -248,4 +248,24 @@ func (t *Test) SkipAll() {
 	t.testingT.Skip()
 }
 
+// Alias of testing.T.Errorf()
+func (t *Test) Errorf(format string, args ...any) {
+	t.testingT.Errorf(format, args...)
+}
+
+// Alias of testing.T.Error()
+func (t *Test) Error(args ...interface{}) {
+	t.testingT.Error(args...)
+}
+
+// Alias of testing.T.Fatalf()
+func (t *Test) Fatalf(format string, args ...any) {
+	t.testingT.Fatalf(format, args...)
+}
+
+// Alias of testing.T.Fatal()
+func (t *Test) Fatal(args ...interface{}) {
+	t.testingT.Fatal(args...)
+}
+
 // TODO: Add other convenient aliases
