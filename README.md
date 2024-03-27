@@ -191,6 +191,30 @@ func TestSuiteGest(testingT *testing.T) {
 
 ```
 
+#### Prl, Parallel
+
+並行テストを実行する場合は、トップレベルでは、`t.Prl()`を使うか、もしくは`testingT.Parallel()`を直接呼び出してください。
+`t.Prl()`は、`testingT.Parallel()`のエイリアスです。
+
+各`Describe`の中のテスト(`Run`レベルのサブテスト)では、`t.Parallel.It(...)`という書き方で並行テストを実行できます。
+
+```go
+func TestSuiteGest(testingT *testing.T) {
+
+  t := gt.CreateTest(testingT)
+  // トップレベルで並行テストにする場合は、`Prl()`を使います。
+  t.Prl() // もしくは、testingT.Parallelでも構いません。
+
+  t.Describe("Parallel testing", func() {
+    // `It`の前に`Parallel()`をつけることで、`Run`レベルでの並行テストになります。
+    t.Parallel().It("is parallelly executed", func() {
+      // ...
+    })
+  })
+}
+
+```
+
 #### アサーション(Expect)
 
 テスト結果をアサーとする場合は、`Expect`関数と、アサート用のメソッドを使います。`ToBe`や、`ToDeepEqual`などのメソッドを使って、結果の値をアサーとします。
