@@ -347,19 +347,17 @@ var nilValue *int = nil
 gt.Expect(t, nilValue).ToBeNil()
 ```
 
-#### `ToContainError()`
+#### `ToBeNilInterface()`
 
-`error`型が`nil`かどうかを確認する場合は、`ToBeNil()`ではなく、`ToContainError()`を使ってください。
-`error`型はインターフェースのため、`ToBeNil()`では正しくアサートすることができません。
+`interface`型の値が`nil`かどうかをアサートするには、`ToBeNil()`ではなく、`ToBeNilInterface`を使ったください。
+例えば、`error`型が`nil`かどうかを確認する場合に使います。
+`interface`である`error`型などは、`ToBeNil()`では正しくアサートすることができません。
 
-`error`が`nil`かどうかを確認する場合は、`Not().ToContainError()`と使ってください。
 
 ```go
 var err error
 // errがnilの場合
-gt.Expect(t, &err).Not().ToContainError()
-// errに何か値がある場合
-gt.Expect(t, &err).ToContainError()
+gt.Expect(t, &err).ToBeNilInterface()
 ```
 
 
