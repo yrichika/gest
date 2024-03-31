@@ -84,31 +84,30 @@ func (expectation *Expectation[A]) ToBeNil() {
 
 }
 
-// Assertion for error values.
-// This only works for error type.
-// It checks if the error is nil or not.
-func (expectation *Expectation[A]) ToContainError() {
+// This function asserts whether the interface is nil or not.
+// It's primarily used to determine if the error is nil or not.
+func (expectation *Expectation[A]) ToBeNilInterface() {
 	expectation.test.testingT.Helper()
 
-	// error is passed as a pointer, so we need to dereference it
+	// interface is passed as a pointer, so we need to dereference it
 	convertedActual := any(*expectation.actual)
 
 	expectation.test.subtotal++
 	if expectation.reverseExpectation {
-		if convertedActual == nil {
+		if convertedActual != nil {
 			expectation.processPassed()
 			return
 		}
-		failMsg := expectation.FailMsg("the error is NOT nil: [%#v]")
-		expectation.processFailure(failMsg, convertedActual, nil)
+		failMsg := expectation.FailMsg("interface IS nil")
+		expectation.processFailure(failMsg, nil, nil)
 		return
 	}
-	if convertedActual != nil {
+	if convertedActual == nil {
 		expectation.processPassed()
 		return
 	}
-	failMsg := expectation.FailMsg("error IS nil")
-	expectation.processFailure(failMsg, nil, nil)
+	failMsg := expectation.FailMsg("the interface is NOT nil: [%#v]")
+	expectation.processFailure(failMsg, convertedActual, nil)
 
 }
 

@@ -23,15 +23,18 @@ func TestExpectAssertions(testingT *testing.T) {
 			notNilValue := 1
 			Expect(t, &notNilValue).Not().ToBeNil()
 		})
+	})
 
-		t.It("should pass when error is nil", func() {
+	t2 := CreateTest(testingT)
+	t2.Describe("ToBeNilInterface", func() {
+		t2.It("should pass when interface is nil", func() {
 			var err error
-			Expect(t, &err).Not().ToContainError()
+			Expect(t2, &err).ToBeNilInterface()
 		})
 
-		t.It("should pass when error is NOT nil", func() {
+		t2.It("should pass when interface is NOT nil", func() {
 			var err error = errors.New("error message")
-			Expect(t, &err).ToContainError()
+			Expect(t2, &err).Not().ToBeNilInterface()
 		})
 	})
 

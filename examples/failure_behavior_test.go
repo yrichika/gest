@@ -45,16 +45,16 @@ func TestFailureBehaviors(testingT *testing.T) {
 			// Output: failure_behavior_test.go:44: value IS nil: [(*int)(nil)]
 		})
 
-		t.It("fails with ToContainError", func() {
-			var err error
-			gt.Expect(t, &err).ToContainError()
-			// Output: failure_behavior_test.go:50: error IS nil
+		t.It("fails with ToBeNilInterface", func() {
+			var err error = errors.New("error message")
+			gt.Expect(t, &err).ToBeNilInterface()
+			// Output: failure_behavior_test.go:50: the interface is NOT nil: [&errors.errorString{s:"error message"}]
 		})
 
-		t.It("fails with Not.ToContainError", func() {
-			var err error = errors.New("error message")
-			gt.Expect(t, &err).Not().ToContainError()
-			// Output: failure_behavior_test.go:56: the error is NOT nil: [&errors.errorString{s:"error message"}]
+		t.It("fails with Not.ToBeNilInterface", func() {
+			var err error
+			gt.Expect(t, &err).Not().ToBeNilInterface()
+			// Output: failure_behavior_test.go:56: interface IS nil
 		})
 
 		t.It("fails with ToBeSamePointerAs", func() {
